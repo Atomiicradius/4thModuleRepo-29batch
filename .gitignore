@@ -28,3 +28,8 @@ playwright-report/
 *.sw?
 .DS_Store
 Thumbs.db
+
+# Instructor guides & manuals
+*instructor*
+*INSTRUCTOR*
+

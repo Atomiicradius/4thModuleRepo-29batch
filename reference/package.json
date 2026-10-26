@@ -1,0 +1,15 @@
+{
+  "name": "day4-reference-app",
+  "version": "1.0.0",
+  "description": "Finished Reference Implementation: RVCE Day 4 Full Stack Student Management App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0"
+  }
+}

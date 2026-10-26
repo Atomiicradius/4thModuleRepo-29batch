@@ -1,18 +1,11 @@
 /**
  * Step 02: Connect Express to MongoDB (Start Template)
  * Follow along with the instructor live!
- * 
- * 💡 LAB TIP: Do NOT type long code blocks! 
- * Select the commented sections below and press Ctrl + / (Windows) or Cmd + / (Mac) to uncomment.
  */
 
 const express = require('express');
 const cors = require('cors');
-
-// ============================================================================
-// STEP 1: Import MongoClient from official 'mongodb' driver
-// (UNCOMMENT the line below)
-// ============================================================================
+// DEMO 1: Import MongoClient from the official 'mongodb' native driver
 const { MongoClient } = require('mongodb');
 
 const app = express();
@@ -22,50 +15,40 @@ const PORT = 3000;
 app.use(cors());
 app.use(express.json());
 
-// ============================================================================
-// STEP 2: MongoDB Connection Configuration
+// DEMO 2: Define MongoDB Connection URI and Database Name
 // NOTE: Always use 127.0.0.1 instead of localhost on Windows to avoid IPv6 resolution delays.
-// (UNCOMMENT the lines below)
-// ============================================================================
 const MONGO_URI = 'mongodb://127.0.0.1:27017';
 const DB_NAME = 'CollegeDB';
 
-// Global variables to hold active database and collection instances
+// Declare in outer scope so all route handlers can access db and studentsCollection!
 let db;
 let studentsCollection;
 
-// ============================================================================
-// STEP 3: Health Check Route
-// Shows connection status when visiting http://127.0.0.1:3000/
-// ============================================================================
+// Health check route (Task 1)
 app.get('/', (req, res) => {
   res.json({
     status: 'ok',
-    message: 'Connected to MongoDB',
-    database: DB_NAME,
-    collection: 'students'
+    message: "Hello from Samarth's server connected to CollegeDB",
+    time: new Date().toLocaleTimeString(),
+    database: DB_NAME
   });
 });
 
-// ============================================================================
-// STEP 4: Connect to MongoDB once at startup using async startServer()
-// (All connection logic is already wired up below!)
-// ============================================================================
+// DEMO 3: Connect to MongoDB once at startup using an async function
 async function startServer() {
   try {
-    // 1. Create client and connect to local MongoDB
+    // 1. Create client and connect
     const client = new MongoClient(MONGO_URI);
     await client.connect();
-    console.log('Connected to MongoDB at 127.0.0.1:27017');
+    console.log('Connected to MongoDB');
 
-    // 2. Select database and collection
+    // 2. Select database and collection (assign to outer variables, NO const!)
     db = client.db(DB_NAME);
     studentsCollection = db.collection('students');
 
     // 3. Start listening for incoming HTTP requests on port 3000
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
-      console.log(`Visit http://127.0.0.1:${PORT} in your browser`);
     });
   } catch (error) {
     console.error('Failed to connect to MongoDB:', error.message);
@@ -75,26 +58,24 @@ async function startServer() {
 
 startServer();
 
-// ============================================================================
-// YOUR TURN: Live Database Write Verification (/ping-db)
-// 
-// Simply UNCOMMENT the block below (Select & press Ctrl + /), restart your
-// server (`node server.js`), and visit http://127.0.0.1:3000/ping-db in your browser!
-// ============================================================================
-// app.get('/ping-db', async (req, res) => {
-//   try {
-//     const result = await db.collection('pings').insertOne({
-//       ping: 'pong',
-//       author: 'Student',
-//       message: 'MongoDB write verified from Express!',
-//       timestamp: new Date()
-//     });
-//     res.json({
-//       status: 'ok',
-//       message: 'Ping document written to CollegeDB.pings collection!',
-//       insertedId: result.insertedId
-//     });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
+// ==========================================
+// YOUR TURN:
+// Task 1: Personalize the health route GET / to return your name and current timestamp.
+// Task 2: Create a test insert route to visibly write data to MongoDB:
+app.get('/ping-db', async (req, res) => {
+  try {
+    const result = await db.collection('pings').insertOne({
+      ping: 'pong',
+      author: 'Samarth',
+      timestamp: new Date()
+    });
+    res.json({
+      status: 'ok',
+      message: 'Ping document written to CollegeDB.pings collection!',
+      insertedId: result.insertedId
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// ==========================================

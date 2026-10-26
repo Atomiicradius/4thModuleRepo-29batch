@@ -1,0 +1,511 @@
+{
+  "info": {
+    "_postman_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+    "name": "Day 4: Student Management API (RVCE CSE)",
+    "description": "Postman API test collection for Day 4 Full Stack Development Skill Lab at RV College of Engineering.\nCovers all 5 CRUD routes, search, validation, and error edge cases using the {{baseUrl}} environment variable.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://127.0.0.1:3000",
+      "type": "string"
+    },
+    {
+      "key": "studentId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Happy Path - CRUD Operations",
+      "item": [
+        {
+          "name": "0. Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            },
+            "description": "Verifies that Express is running and responsive."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Returns JSON with status ok', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.status).to.eql('ok');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "1. Create Student (POST /students)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Rahul\",\n  \"usn\": \"1CS23CS001\",\n  \"semester\": 3,\n  \"branch\": \"CSE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            },
+            "description": "Creates a new student document in MongoDB. Saves the generated _id into {{studentId}} for subsequent tests."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "var jsonData = pm.response.json();",
+                  "pm.test('Created student contains _id and correct fields', function () {",
+                  "    pm.expect(jsonData).to.have.property('_id');",
+                  "    pm.expect(jsonData.usn).to.eql('1CS23CS001');",
+                  "    pm.expect(jsonData.name).to.eql('Rahul');",
+                  "    pm.expect(jsonData.semester).to.eql(3);",
+                  "    pm.expect(jsonData.branch).to.eql('CSE');",
+                  "});",
+                  "pm.collectionVariables.set('studentId', jsonData._id);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "2. Get All Students (GET /students)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            },
+            "description": "Retrieves the full array of students from MongoDB."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response is an array', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(Array.isArray(json)).to.be.true;",
+                  "    pm.expect(json.length).to.be.above(0);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "3. Search Students (GET /students?search=Rahul)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students?search=Rahul",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"],
+              "query": [
+                {
+                  "key": "search",
+                  "value": "Rahul"
+                }
+              ]
+            },
+            "description": "Filters student records case-insensitively by name or USN using regex."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Search returns matching students', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.some(s => s.name.includes('Rahul'))).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "4. Get Student by ID (GET /students/:id)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}"]
+            },
+            "description": "Finds a specific student by BSON ObjectId."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Returns the correct student document', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json._id).to.eql(pm.collectionVariables.get('studentId'));",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "5. Update Student (PUT /students/:id)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"semester\": 4,\n  \"branch\": \"ISE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}"]
+            },
+            "description": "Updates student properties using MongoDB $set."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Returns updated student with semester 4 and branch ISE', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.semester).to.eql(4);",
+                  "    pm.expect(json.branch).to.eql('ISE');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "6. Delete Student (DELETE /students/:id)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/{{studentId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "{{studentId}}"]
+            },
+            "description": "Permanently deletes a student from the collection."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Delete message acknowledged', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.message).to.include('deleted successfully');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Error Cases & Validation",
+      "item": [
+        {
+          "name": "Error - Missing Required Fields (POST /students)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Incomplete Student\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            },
+            "description": "Attempts to create a student without USN, semester, or branch."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Error message present', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Error - Invalid Semester (POST /students)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Invalid Sem\",\n  \"usn\": \"1CS23CS999\",\n  \"semester\": 12,\n  \"branch\": \"CSE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            },
+            "description": "Tests validation: semester must be integer between 1 and 8."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Error specifies semester range', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.include('between 1 and 8');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Error - Duplicate USN (POST /students)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Duplicate Priya\",\n  \"usn\": \"1CS23CS002\",\n  \"semester\": 3,\n  \"branch\": \"CSE\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students",
+              "host": ["{{baseUrl}}"],
+              "path": ["students"]
+            },
+            "description": "Attempts to insert a duplicate USN that already exists (from seed data)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 409 Conflict', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});",
+                  "pm.test('Error mentions duplicate USN', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.include('already exists');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Error - Invalid ObjectId Format (GET /students/:id)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/invalid-id-12345",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "invalid-id-12345"]
+            },
+            "description": "Tests handling of malformed ID string."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 400 Bad Request', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "pm.test('Error mentions invalid ID format', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.include('Invalid student ID');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Error - Non-Existent ID (GET /students/:id)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/507f1f77bcf86cd799439011",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "507f1f77bcf86cd799439011"]
+            },
+            "description": "Tests valid 24-char ObjectId that does not exist in the collection."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "pm.test('Error message is Student not found', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.error).to.eql('Student not found');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Error - Update Non-Existent ID (PUT /students/:id)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"semester\": 5\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/students/507f1f77bcf86cd799439011",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "507f1f77bcf86cd799439011"]
+            },
+            "description": "Attempts update on a valid but nonexistent ObjectId."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        },
+        {
+          "name": "Error - Delete Non-Existent ID (DELETE /students/:id)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/students/507f1f77bcf86cd799439011",
+              "host": ["{{baseUrl}}"],
+              "path": ["students", "507f1f77bcf86cd799439011"]
+            },
+            "description": "Attempts delete on a valid but nonexistent ObjectId."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 404 Not Found', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

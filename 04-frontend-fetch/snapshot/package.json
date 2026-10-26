@@ -1,0 +1,15 @@
+{
+  "name": "04-frontend-fetch",
+  "version": "1.0.0",
+  "description": "Step 04: Frontend Fetch integration with Express static files and MongoDB (RVCE Day 4)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0"
+  }
+}

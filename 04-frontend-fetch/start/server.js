@@ -17,6 +17,7 @@
 
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
@@ -25,6 +26,9 @@ const PORT = 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Serve static frontend assets from 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Configuration
 const MONGO_URI = 'mongodb://127.0.0.1:27017';

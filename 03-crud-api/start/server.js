@@ -68,7 +68,6 @@ app.get('/', (req, res) => {
 
 // ============================================================================
 // ROUTE 1: CREATE -> POST /students (201 Created)
-// (UNCOMMENT to enable)
 // ============================================================================
 // app.post('/students', async (req, res) => {
 //   try {
@@ -76,16 +75,16 @@ app.get('/', (req, res) => {
 //     if (validationError) {
 //       return res.status(400).json({ error: validationError });
 //     }
-// 
+
 //     const newStudent = {
 //       name: req.body.name.trim(),
 //       usn: req.body.usn.trim().toUpperCase(),
 //       semester: parseInt(req.body.semester, 10),
 //       branch: req.body.branch.trim().toUpperCase()
 //     };
-// 
+
 //     const result = await studentsCollection.insertOne(newStudent);
-// 
+
 //     res.status(201).json({
 //       _id: result.insertedId,
 //       ...newStudent
@@ -102,14 +101,14 @@ app.get('/', (req, res) => {
 // });
 
 // ============================================================================
+// ============================================================================
 // ROUTE 2: READ ALL -> GET /students (200 OK)
-// (UNCOMMENT to enable)
 // ============================================================================
 // app.get('/students', async (req, res) => {
 //   try {
 //     const { search } = req.query;
 //     let filter = {};
-// 
+
 //     if (search && search.trim() !== '') {
 //       const cleanSearch = escapeRegex(search.trim());
 //       const regex = new RegExp(cleanSearch, 'i');
@@ -120,7 +119,7 @@ app.get('/', (req, res) => {
 //         ]
 //       };
 //     }
-// 
+
 //     const students = await studentsCollection.find(filter).toArray();
 //     res.json(students);
 //   } catch (error) {
@@ -136,11 +135,11 @@ app.get('/', (req, res) => {
 // app.get('/students/:id', async (req, res) => {
 //   try {
 //     const { id } = req.params;
-// 
+
 //     if (!ObjectId.isValid(id)) {
 //       return res.status(400).json({ error: 'Invalid student ID format' });
 //     }
-// 
+
 //     // Critical: new ObjectId(id) converts string to BSON ObjectId
 //     const student = await studentsCollection.findOne({ _id: new ObjectId(id) });
 //     if (!student) {
@@ -160,31 +159,31 @@ app.get('/', (req, res) => {
 // app.put('/students/:id', async (req, res) => {
 //   try {
 //     const { id } = req.params;
-// 
+
 //     if (!ObjectId.isValid(id)) {
 //       return res.status(400).json({ error: 'Invalid student ID format' });
 //     }
-// 
+
 //     const validationError = validateStudent(req.body, true);
 //     if (validationError) {
 //       return res.status(400).json({ error: validationError });
 //     }
-// 
+
 //     const updateFields = {};
 //     if (req.body.name !== undefined) updateFields.name = req.body.name.trim();
 //     if (req.body.usn !== undefined) updateFields.usn = req.body.usn.trim().toUpperCase();
 //     if (req.body.semester !== undefined) updateFields.semester = parseInt(req.body.semester, 10);
 //     if (req.body.branch !== undefined) updateFields.branch = req.body.branch.trim().toUpperCase();
-// 
+
 //     const result = await studentsCollection.updateOne(
 //       { _id: new ObjectId(id) },
 //       { $set: updateFields }
 //     );
-// 
+
 //     if (result.matchedCount === 0) {
 //       return res.status(404).json({ error: 'Student not found' });
 //     }
-// 
+
 //     const updatedStudent = await studentsCollection.findOne({ _id: new ObjectId(id) });
 //     res.json(updatedStudent);
 //   } catch (error) {
@@ -198,18 +197,18 @@ app.get('/', (req, res) => {
 //   }
 // });
 
-// ============================================================================
-// ROUTE 5: DELETE -> DELETE /students/:id (200 OK)
-// (UNCOMMENT to enable)
-// ============================================================================
+// // ============================================================================
+// // ROUTE 5: DELETE -> DELETE /students/:id (200 OK)
+// // (UNCOMMENT to enable)
+// // ============================================================================
 // app.delete('/students/:id', async (req, res) => {
 //   try {
 //     const { id } = req.params;
-// 
+
 //     if (!ObjectId.isValid(id)) {
 //       return res.status(400).json({ error: 'Invalid student ID format' });
 //     }
-// 
+
 //     const result = await studentsCollection.deleteOne({ _id: new ObjectId(id) });
 //     if (result.deletedCount === 0) {
 //       return res.status(404).json({ error: 'Student not found' });

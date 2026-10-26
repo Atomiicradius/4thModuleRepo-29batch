@@ -158,26 +158,26 @@ studentForm.addEventListener('submit', async (e) => {
 // (UNCOMMENT the block below to enable deletion with confirmation!)
 // ============================================================================
 async function deleteStudent(id, name) {
-  // const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
-  // if (!confirmDelete) return;
-  // 
-  // try {
-  //   const response = await fetch(`${API_BASE}/${id}`, {
-  //     method: 'DELETE'
-  //   });
-  //   const data = await response.json();
-  // 
-  //   if (!response.ok) {
-  //     showNotification(data.error || 'Failed to delete student', 'error');
-  //     return;
-  //   }
-  // 
-  //   showNotification(`Student ${name} deleted successfully!`, 'success');
-  //   loadStudents(); // Re-render table after deletion!
-  // } catch (error) {
-  //   console.error('Delete error:', error);
-  //   showNotification('Network error while deleting.', 'error');
-  // }
+  const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
+  if (!confirmDelete) return;
+
+  try {
+    const response = await fetch(`${API_BASE}/${id}`, {
+      method: 'DELETE'
+    });
+    const data = await response.json();
+
+    if (!response.ok) {
+      showNotification(data.error || 'Failed to delete student', 'error');
+      return;
+    }
+
+    showNotification(`Student ${name} deleted successfully!`, 'success');
+    loadStudents(); // Re-render table after deletion!
+  } catch (error) {
+    console.error('Delete error:', error);
+    showNotification('Network error while deleting.', 'error');
+  }
 }
 
 

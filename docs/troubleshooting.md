@@ -8,7 +8,7 @@ This guide covers every common bug, error message, and stumbling block encounter
 
 | Error Message / Symptom | Root Cause | Quick Fix |
 | :--- | :--- | :--- |
-| `'mongosh' is not recognized` | `mongosh.exe` directory not in Windows User `PATH` | Run `winget install MongoDB.Shell` or add `%LOCALAPPDATA%\Programs\mongosh` to PATH |
+| `'mongosh' is not recognized` | You typed `mongosh` in PowerShell but the standalone program is not installed (it is **optional**) | Use the **`>_ MONGOSH`** bar inside MongoDB Compass instead. Or install it: `winget install MongoDB.Shell` |
 | `SyntaxError: Missing semicolon` in the Compass shell | You pasted a PowerShell line such as `mongosh --eval "..."` into the shell | Paste only the JavaScript inside the quotes, e.g. `db.getSiblingDB('CollegeDB').dropDatabase()` |
 | `SyntaxError: Unexpected token` after pasting `mongodb://...` | You pasted a connection address into the shell | Put the address in Compass's **New Connection** box instead |
 | `connect ECONNREFUSED 127.0.0.1:27017` | Local MongoDB Windows Service is stopped | Open Admin PowerShell and run: `net start MongoDB` |

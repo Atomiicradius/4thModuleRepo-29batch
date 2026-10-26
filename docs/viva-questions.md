@@ -181,7 +181,7 @@ The `node_modules` folder contains all the downloaded third-party packages, libr
 **Model Answer:**  
 Data storage and retrieval can be verified in four independent ways:
 1. **Frontend UI:** The student appears in the HTML table immediately and persists after a hard browser reload (`Ctrl + F5`).
-2. **MongoDB Shell (`mongosh`):** Running `use CollegeDB` followed by `db.students.find({ usn: "..." })` returns the stored document.
+2. **MongoDB shell (the **`>_ MONGOSH`** bar in Compass, or `mongosh`):** Running `use("CollegeDB")` followed by `db.students.find({ usn: "..." })` returns the stored document.
 3. **MongoDB Compass:** Launching Compass GUI, opening `CollegeDB` -> `students`, and viewing the document card.
 4. **Postman / cURL:** Sending `GET http://127.0.0.1:3000/students` returns the stored document in the JSON response array.  
 *Key terms: Persistence verification, mongosh, Compass GUI, Postman, hard reload.*

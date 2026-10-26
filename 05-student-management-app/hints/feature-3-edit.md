@@ -1,5 +1,8 @@
 # Hints for Feature 3: Edit Student (Form Switching & PUT Request)
 
+> **Note:** the finished code for this feature is already in `public/script.js`, switched off with `//` (search for `TASK 1A, 1B and 1C`). These hints explain *how it works*. Read them after you have tried the task.
+
+
 ### Goal
 Clicking "Edit" fills the form with that student's details, changes the submit button to "Update Student", reveals a "Cancel" button, and sends a `PUT /students/:id` request upon submission.
 

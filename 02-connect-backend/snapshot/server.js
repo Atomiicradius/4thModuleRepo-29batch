@@ -28,14 +28,34 @@ const DB_NAME = 'CollegeDB';
 let db;
 let studentsCollection;
 
+const YOUR_NAME = 'Rahul'; // Task 1: your own name goes here
+
 // Health check endpoint
 app.get('/', (req, res) => {
   res.json({
     status: 'ok',
-    message: 'Connected to MongoDB',
-    database: DB_NAME,
-    collection: 'students'
+    message: `Hello from ${YOUR_NAME}'s server connected to ${DB_NAME}`,
+    time: new Date().toLocaleTimeString(),
+    database: DB_NAME
   });
+});
+
+// Task 2: writes one document to the 'pings' collection on every visit
+app.get('/ping-db', async (req, res) => {
+  try {
+    const result = await db.collection('pings').insertOne({
+      ping: 'pong',
+      author: YOUR_NAME,
+      timestamp: new Date()
+    });
+    res.json({
+      status: 'ok',
+      message: 'Ping document written to CollegeDB.pings collection!',
+      insertedId: result.insertedId
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 
 // Test insert route (Your Turn: inserts a document to verify live writing)

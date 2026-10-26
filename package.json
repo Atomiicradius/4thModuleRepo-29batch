@@ -4,7 +4,7 @@
   "description": "Day 4: Database Integration and Full-Stack Integration - RVCE CSE Skill Lab",
   "scripts": {
     "setup:check": "node 00-setup-check/check-setup.js",
-    "seed": "mongosh mongodb://127.0.0.1:27017/CollegeDB 01-mongodb-shell/seed.js",
+    "seed": "node 01-mongodb-shell/seed-node.js",
     "start": "node reference/server.js",
     "test:api": "node tests/api.test.js",
     "test:e2e": "node tests/e2e.test.js",

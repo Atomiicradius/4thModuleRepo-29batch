@@ -89,7 +89,6 @@ function renderStudentTable(students) {
       <td>Semester ${escapeHtml(student.semester)}</td>
       <td><span class="badge">${escapeHtml(student.branch)}</span></td>
       <td>
-        <!-- YOUR TURN: Wire this button to deleteStudent() -->
         <button class="btn btn-danger delete-btn" data-id="${student._id}" data-name="${escapeHtml(student.name)}">
           Delete
         </button>
@@ -99,7 +98,7 @@ function renderStudentTable(students) {
     tableBody.appendChild(tr);
   });
 
-  // Attach delete handlers (students will fill in deleteStudent function below)
+  // Attach delete handlers (each button calls deleteStudent, which you switch on at the bottom)
   document.querySelectorAll('.delete-btn').forEach((button) => {
     button.addEventListener('click', () => {
       const id = button.getAttribute('data-id');
@@ -154,32 +153,34 @@ studentForm.addEventListener('submit', async (e) => {
 });
 
 // ============================================================================
-// YOUR TURN: Complete the deleteStudent function!
-// (UNCOMMENT the block below to enable deletion with confirmation!)
+// TASK: switch the Delete button on
+// Select the commented lines between the two TASK markers, then press
+// Ctrl + /  (Cmd + / on Mac) to uncomment them. Save, then reload the page.
 // ============================================================================
-async function deleteStudent(id, name) {
-  const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
-  if (!confirmDelete) return;
-
-  try {
-    const response = await fetch(`${API_BASE}/${id}`, {
-      method: 'DELETE'
-    });
-    const data = await response.json();
-
-    if (!response.ok) {
-      showNotification(data.error || 'Failed to delete student', 'error');
-      return;
-    }
-
-    showNotification(`Student ${name} deleted successfully!`, 'success');
-    loadStudents(); // Re-render table after deletion!
-  } catch (error) {
-    console.error('Delete error:', error);
-    showNotification('Network error while deleting.', 'error');
-  }
-}
-
+// ───── TASK ─────
+// async function deleteStudent(id, name) {
+//   const confirmDelete = window.confirm(`Are you sure you want to delete ${name}?`);
+//   if (!confirmDelete) return;
+//
+//   try {
+//     const response = await fetch(`${API_BASE}/${id}`, {
+//       method: 'DELETE'
+//     });
+//     const data = await response.json();
+//
+//     if (!response.ok) {
+//       showNotification(data.error || 'Failed to delete student', 'error');
+//       return;
+//     }
+//
+//     showNotification(`Student ${name} deleted successfully!`, 'success');
+//     loadStudents(); // Re-render table after deletion!
+//   } catch (error) {
+//     console.error('Delete error:', error);
+//     showNotification('Network error while deleting.', 'error');
+//   }
+// }
+// ───── END TASK ─────
 
 // Initial load
 document.addEventListener('DOMContentLoaded', loadStudents);

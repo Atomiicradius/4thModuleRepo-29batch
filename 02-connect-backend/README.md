@@ -1,174 +1,137 @@
-# Step 02: Connect Express to MongoDB (Module 3a)
+# Step 2: Connect your Node.js server to MongoDB
 
-## Goal
-Initialize a Node.js Express backend project, install the official `mongodb` native driver and `cors`, establish a single persistent connection to local MongoDB Community Server at startup, and create a `GET /` health-check route.
+⏱ About 20 minutes · 🖥️ VS Code terminal · 🌐 Browser · 🍃 Compass shell
 
----
+**You will:** run a server that connects to MongoDB, then make two small changes of your own.
 
-## Concepts
-A Node.js backend acts as the middle tier between client browsers and the database server. Rather than creating a new database connection for each incoming HTTP request (which is computationally expensive and quickly exhausts database connections), modern backends use **connection pooling** through `MongoClient`: we connect once when the server boots and reuse that active connection across all routes. Using `async/await` ensures our server waits for MongoDB to acknowledge the connection before accepting HTTP requests.
+**The idea:** the server connects to the database **once**, when it starts, and reuses that connection for every request. (We write `127.0.0.1` instead of `localhost` because on Windows `localhost` can be slow.)
 
 ---
 
-## Instructor Demo Steps
+## Part 1: Run the server
 
-Follow along step-by-step in your terminal:
+**1. Go to the Step 2 folder.** 🖥️ From the top folder of the lab:
 
-### 1. Initialize the Node.js Project & Install Dependencies
-Navigate into your project folder:
 ```powershell
 cd 02-connect-backend/start
 ```
 
-Install the required packages:
-```powershell
-npm install express mongodb cors
-```
-- `express`: Fast, minimalist web framework for Node.js.
-- `mongodb`: The official MongoDB native driver for Node.js.
-- `cors`: Express middleware to enable Cross-Origin Resource Sharing.
+**2. Start the server.** 🖥️
 
-### 2. Inspect Connection String & Configuration
-In `server.js`, specify:
-```javascript
-const { MongoClient } = require('mongodb');
-
-// Always use 127.0.0.1 on Windows to bypass IPv6 resolution delays
-const MONGO_URI = 'mongodb://127.0.0.1:27017';
-const DB_NAME = 'CollegeDB';
-```
-
-> **Why `127.0.0.1` instead of `localhost`?**
-> On Windows 10/11, `localhost` often resolves to the IPv6 address `::1` first. If MongoDB is only listening on IPv4, Node.js waits 2-3 seconds before falling back, or fails with `ECONNREFUSED`. Using `127.0.0.1` connects instantly.
-
-### 3. Implement Single Persistent Connection at Startup
-Wrap the startup sequence in an `async` function:
-```javascript
-async function startServer() {
-  try {
-    // Connect to the MongoDB server
-    const client = new MongoClient(MONGO_URI);
-    await client.connect();
-    console.log('Connected to MongoDB');
-
-    // Access the database and collection
-    db = client.db(DB_NAME);
-    studentsCollection = db.collection('students');
-
-    // Start Express listener only AFTER MongoDB is connected
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  } catch (error) {
-    console.error('Failed to connect to MongoDB:', error.message);
-    process.exit(1);
-  }
-}
-
-startServer();
-```
-
-### 4. Add the Health Route
-```javascript
-app.get('/', (req, res) => {
-  res.json({
-    status: 'ok',
-    message: 'Connected to MongoDB',
-    database: DB_NAME,
-    collection: 'students'
-  });
-});
-```
-
-### 5. Run and Test
-Start the server:
 ```powershell
 node server.js
 ```
-Open your browser or Postman and visit `http://127.0.0.1:3000/`.
 
----
+✅ You should see exactly two lines:
 
-## Your Turn: Student Task
-
-1. **Task 1 — Personalize Health Route:** In `server.js`, modify `GET /` to include your name and the current server time:
-   ```javascript
-   app.get('/', (req, res) => {
-     res.json({
-       status: 'ok',
-       message: 'Hello from Rahul\'s server connected to CollegeDB',
-       time: new Date().toLocaleTimeString(),
-       database: DB_NAME
-     });
-   });
-   ```
-2. **Task 2 — Write Data Live to MongoDB (`/ping-db`):** Add a test route below `GET /` that writes a real document to a `pings` collection:
-   ```javascript
-   app.get('/ping-db', async (req, res) => {
-     try {
-       const result = await db.collection('pings').insertOne({
-         ping: 'pong',
-         author: 'Rahul',
-         timestamp: new Date()
-       });
-       res.json({
-         status: 'ok',
-         message: 'Ping document written to CollegeDB.pings collection!',
-         insertedId: result.insertedId
-       });
-     } catch (err) {
-       res.status(500).json({ error: err.message });
-     }
-   });
-   ```
-3. Restart your server (`node server.js`) and visit `http://127.0.0.1:3000/ping-db` in your browser. Refresh 2 or 3 times!
-4. Verify your writes physically hit the database. Use the **`>_ MONGOSH`** panel in MongoDB Compass (or a second PowerShell window running `mongosh`):
-   ```javascript
-   use("CollegeDB")
-   db.getCollectionNames()
-   db.pings.find()
-   ```
-   *Notice:* The `pings` collection was dynamically created by your Express code, and each visit inserted a new document with an `_id` and timestamp!
-
----
-
-## Checkpoint Checklist
-- [ ] Installed `express`, `mongodb`, and `cors`.
-- [ ] Executed `node server.js`.
-- [ ] Terminal displays exact messages:
-  - `Connected to MongoDB`
-  - `Server running on port 3000`
-- [ ] Navigated to `http://127.0.0.1:3000/` in browser or Postman and received `200 OK` JSON.
-- [ ] Completed "Your Turn" by temporarily modifying and verifying `DB_NAME`.
-
----
-
-## Expected Output
-**Terminal:**
-```text
+```
 Connected to MongoDB
 Server running on port 3000
 ```
 
-**Browser / Postman (`GET http://127.0.0.1:3000/`):**
-```json
-{
-  "status": "ok",
-  "message": "Connected to MongoDB",
-  "database": "CollegeDB",
-  "collection": "students"
-}
+> `Cannot find module 'express'`? Go to the top folder (`cd ../..`) and run `npm install --omit=dev`, then come back.
+> `ECONNREFUSED`? MongoDB is not running. See **Stuck?** below.
+
+**3. Open the server in your browser.** 🌐
+
 ```
+http://127.0.0.1:3000/
+```
+
+✅ You should see JSON like this (the time will be different):
+
+```json
+{"status":"ok","message":"Hello from YOUR NAME's server connected to CollegeDB","time":"10:15:02 AM","database":"CollegeDB"}
+```
+
+**4. Read the code.** In VS Code open `server.js`. It has three parts, top to bottom:
+
+| Part | What it does |
+| :--- | :--- |
+| `require('mongodb')` and `MONGO_URI` | Loads the MongoDB driver and says where the database is |
+| `let db; let studentsCollection;` | Boxes for the connection. They sit **outside** every function so every route can use them |
+| `startServer()` | Connects once, **fills the boxes without `const`/`let`**, then starts listening |
+
+---
+
+## Your turn
+
+### Task 1: Put your name in the message
+
+1. In `server.js`, find this line (use `Ctrl + F` and search `YOUR NAME`):
+
+   ```javascript
+   const YOUR_NAME = 'YOUR NAME';
+   ```
+
+2. Replace `YOUR NAME` with your own name (keep the quotes). Example: `const YOUR_NAME = 'Asha';`
+3. Save the file (`Ctrl + S`).
+4. Restart the server. 🖥️ Click in the terminal, press `Ctrl + C`, then run:
+
+   ```powershell
+   node server.js
+   ```
+
+5. Reload `http://127.0.0.1:3000/` 🌐
+
+✅ The message now says `Hello from Asha's server connected to CollegeDB` (with your name).
+
+### Task 2: Make the server write to MongoDB
+
+1. In `server.js`, find the line `// ───── TASK 2 ─────` (search `TASK 2`).
+2. Select every line **between** `TASK 2` and `END TASK 2`: click on the first `// app.get(` line, then hold `Shift` and click on the last `// });` line.
+3. Press `Ctrl + /` (Mac: `Cmd + /`). The `//` disappears from every selected line.
+4. Save, then restart the server (`Ctrl + C`, then `node server.js`). 🖥️
+5. Open this address, then **reload it 3 times**: 🌐
+
+   ```
+   http://127.0.0.1:3000/ping-db
+   ```
+
+   ✅ Each time you see JSON with a different `insertedId`:
+
+   ```json
+   {"status":"ok","message":"Ping document written to CollegeDB.pings collection!","insertedId":"6adfcdd8493340f8e381d7cc"}
+   ```
+
+6. Now look inside the database. 🍃 In the Compass shell:
+
+   ```javascript
+   use("CollegeDB")
+   ```
+
+   ```javascript
+   db.getCollectionNames()
+   ```
+
+   ✅ The list now includes `'pings'`. Nobody created it: MongoDB made it the first time your code wrote to it.
+
+   ```javascript
+   db.pings.find()
+   ```
+
+   ✅ You see **3 documents** (one per reload), each with `ping: 'pong'`, your name as `author`, and a `timestamp`.
+
+   > The `Z` at the end of the timestamp means UTC time, which is 5 hours 30 minutes behind India time.
+
+---
+
+## Done when
+
+- [ ] The terminal printed `Connected to MongoDB` and `Server running on port 3000`
+- [ ] `http://127.0.0.1:3000/` shows **your name**
+- [ ] `/ping-db` worked, and `db.pings.find()` shows one document per reload
 
 ---
 
 ## Stuck?
-- **Terminal shows `connect ECONNREFUSED 127.0.0.1:27017`**:
-  - The local MongoDB service is not running. Run `net start MongoDB` in an Administrator prompt.
-- **Port 3000 in use (`EADDRINUSE: address already in use :::3000`)**:
-  - A previous Node process is still running. In PowerShell, find and terminate it:
-    ```powershell
-    Get-Process -Name node | Stop-Process -Force
-    ```
-- **Behind or code has errors?**:
-  - Compare your code against `02-connect-backend/snapshot/server.js` or copy the snapshot files over to your `start` folder.
+
+| What you see | Why | Fix |
+| :--- | :--- | :--- |
+| `{"error":"db is not defined"}` at `/ping-db` | `db` was created **inside** `startServer()` with `const` | At the top declare `let db;` and `let studentsCollection;`. Inside `startServer()` write `db = client.db(DB_NAME);` with **no `const`**. Then restart |
+| `Cannot GET /ping-db` | TASK 2 is not switched on, or you did not restart | Do Task 2 steps 3 and 4 again |
+| The page still shows `YOUR NAME` | You did not save, or did not restart the server | `Ctrl + S`, then `Ctrl + C` and `node server.js` |
+| `EADDRINUSE: address already in use :::3000` | An old server is still running | `Ctrl + C` in its terminal, or see **Stop a server** in the top README |
+| `ECONNREFUSED 127.0.0.1:27017` | The MongoDB service is stopped | **PowerShell as Administrator**: `net start MongoDB` |
+| `Cannot find module 'express'` | Packages are not installed | `cd ../..` then `npm install --omit=dev` |
+| Everything looks broken | | Copy the finished code (see **Fell behind?** in the top README) |

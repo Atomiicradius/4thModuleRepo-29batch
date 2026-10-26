@@ -183,6 +183,14 @@ async function runApiTests() {
       assert.ok(data.some((s) => s.name.includes('Arjun')));
     });
 
+    // 7b. Search must really filter: a search with no match returns an empty array
+    await test('GET /students?search=<no match> -> 200 OK empty array', async () => {
+      const res = await fetch(`${BASE_URL}/students?search=zzz-no-such-student`);
+      assert.strictEqual(res.status, 200);
+      const data = await res.json();
+      assert.deepStrictEqual(data, []);
+    });
+
     // 8. Read by ID
     await test(`GET /students/:id (${createdId}) -> 200 OK`, async () => {
       const res = await fetch(`${BASE_URL}/students/${createdId}`);

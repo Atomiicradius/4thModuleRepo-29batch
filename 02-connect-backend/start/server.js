@@ -1,52 +1,74 @@
 /**
- * Step 02: Connect Express to MongoDB (Start Template)
- * Follow along with the instructor live!
+ * Step 02: Connect Express to MongoDB (Starter)
+ * Folder: 02-connect-backend/start        Run with: node server.js
  */
 
 const express = require('express');
 const cors = require('cors');
-// DEMO 1: Import MongoClient from the official 'mongodb' native driver
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require('mongodb'); // the official MongoDB driver
 
 const app = express();
 const PORT = 3000;
 
-// Enable CORS and JSON parsing
 app.use(cors());
 app.use(express.json());
 
-// DEMO 2: Define MongoDB Connection URI and Database Name
-// NOTE: Always use 127.0.0.1 instead of localhost on Windows to avoid IPv6 resolution delays.
+// --- Connection settings ----------------------------------------------------
+// Use 127.0.0.1 (not "localhost") on Windows: it avoids a slow IPv6 lookup.
 const MONGO_URI = 'mongodb://127.0.0.1:27017';
 const DB_NAME = 'CollegeDB';
 
-// Declare in outer scope so all route handlers can access db and studentsCollection!
+// Declared HERE, outside every function, so every route can use them.
+// Inside startServer() we fill them in WITHOUT const or let.
 let db;
 let studentsCollection;
 
-// Health check route (Task 1)
+// --- TASK 1: put your own name between the quotes ---------------------------
+const YOUR_NAME = 'YOUR NAME';
+
+// --- Health check route -------------------------------------------------------
 app.get('/', (req, res) => {
   res.json({
     status: 'ok',
-    message: "Hello from Samarth's server connected to CollegeDB",
+    message: `Hello from ${YOUR_NAME}'s server connected to ${DB_NAME}`,
     time: new Date().toLocaleTimeString(),
     database: DB_NAME
   });
 });
 
-// DEMO 3: Connect to MongoDB once at startup using an async function
+// --- TASK 2: switch this route on ---------------------------------------------
+// Select the commented lines between the two TASK 2 markers, then press Ctrl + /
+// (Cmd + / on Mac) to uncomment them. Save the file and restart the server.
+// ───── TASK 2 ─────
+// app.get('/ping-db', async (req, res) => {
+//   try {
+//     const result = await db.collection('pings').insertOne({
+//       ping: 'pong',
+//       author: YOUR_NAME,
+//       timestamp: new Date()
+//     });
+//     res.json({
+//       status: 'ok',
+//       message: 'Ping document written to CollegeDB.pings collection!',
+//       insertedId: result.insertedId
+//     });
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+// ───── END TASK 2 ─────
+
+// --- Connect to MongoDB ONCE, when the server starts --------------------------
 async function startServer() {
   try {
-    // 1. Create client and connect
     const client = new MongoClient(MONGO_URI);
     await client.connect();
     console.log('Connected to MongoDB');
 
-    // 2. Select database and collection (assign to outer variables, NO const!)
+    // No const/let here: we are filling the variables declared at the top.
     db = client.db(DB_NAME);
     studentsCollection = db.collection('students');
 
-    // 3. Start listening for incoming HTTP requests on port 3000
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
@@ -57,25 +79,3 @@ async function startServer() {
 }
 
 startServer();
-
-// ==========================================
-// YOUR TURN:
-// Task 1: Personalize the health route GET / to return your name and current timestamp.
-// Task 2: Create a test insert route to visibly write data to MongoDB:
-app.get('/ping-db', async (req, res) => {
-  try {
-    const result = await db.collection('pings').insertOne({
-      ping: 'pong',
-      author: 'Samarth',
-      timestamp: new Date()
-    });
-    res.json({
-      status: 'ok',
-      message: 'Ping document written to CollegeDB.pings collection!',
-      insertedId: result.insertedId
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-// ==========================================

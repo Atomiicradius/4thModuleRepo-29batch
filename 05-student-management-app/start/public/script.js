@@ -1,16 +1,12 @@
 /**
- * Step 05: Major Hands-on Project - Student Management App (Start Template)
- * 
- * 💡 LAB TIP: Do NOT waste time typing long code!
- * Select each commented feature below and press Ctrl + / (Windows) or Cmd + / (Mac) to uncomment.
- * 
- * Feature Breakdown:
- * [✓] Feature 1: Add student (POST /students) - ALREADY WORKING!
- * [✓] Feature 2: View directory (GET /students) - ALREADY WORKING!
- * [✓] Feature 4: Delete student (DELETE /students/:id) - ALREADY WORKING!
- * [ ] Feature 3: Edit student (PUT /students/:id) - UNCOMMENT BELOW
- * [ ] Feature 5: Live Search (GET /students?search=...) - UNCOMMENT BELOW
- * [ ] Feature 6: Full-Stack Persistence Test - TEST IN BROWSER/TERMINAL
+ * Step 05: Student Management App (Starter)
+ * Folder: 05-student-management-app/start        Run with: node server.js
+ *
+ * Already working:  Add student, View students, Delete student
+ * Your tasks:       TASK 1A, 1B, 1C -> switch on Edit
+ *                   TASK 2          -> switch on Live Search
+ * To switch a task on: select the commented lines between its two markers,
+ * then press Ctrl + /  (Cmd + / on Mac). Save the file and reload the page (Ctrl + F5).
  */
 
 const API_BASE = '/students';
@@ -37,7 +33,7 @@ let notificationTimeout = null;
 let searchDebounceTimeout = null;
 
 // ============================================================================
-// FEATURE 3 (STEP A): Track editing state (UNCOMMENT to enable)
+// Already written for you: remembers which student is being edited (null = adding)
 // ============================================================================
 let editingStudentId = null;
 
@@ -64,8 +60,7 @@ function showNotification(message, type = 'success') {
 }
 
 // ============================================================================
-// FEATURE 3 (STEP B): Reset form back to "Add Student" mode
-// (UNCOMMENT to enable)
+// Already written for you: puts the form back into "Add Student" mode
 // ============================================================================
 function resetFormToCreateMode() {
   editingStudentId = null;
@@ -153,18 +148,20 @@ function renderStudentTable(students, currentQuery = '') {
     tableBody.appendChild(tr);
   });
 
-  // Attach Edit handlers
-  document.querySelectorAll('.edit-btn').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      startEditingStudent({
-        _id: btn.getAttribute('data-id'),
-        name: btn.getAttribute('data-name'),
-        usn: btn.getAttribute('data-usn'),
-        semester: btn.getAttribute('data-semester'),
-        branch: btn.getAttribute('data-branch')
-      });
-    });
-  });
+  // TASK 1A: switch on the Edit buttons
+  // ───── TASK 1A ─────
+  // document.querySelectorAll('.edit-btn').forEach((btn) => {
+  //   btn.addEventListener('click', () => {
+  //     startEditingStudent({
+  //       _id: btn.getAttribute('data-id'),
+  //       name: btn.getAttribute('data-name'),
+  //       usn: btn.getAttribute('data-usn'),
+  //       semester: btn.getAttribute('data-semester'),
+  //       branch: btn.getAttribute('data-branch')
+  //     });
+  //   });
+  // });
+  // ───── END TASK 1A ─────
 
   // Attach Delete handlers
   document.querySelectorAll('.delete-btn').forEach((button) => {
@@ -177,37 +174,38 @@ function renderStudentTable(students, currentQuery = '') {
 }
 
 // ============================================================================
-// FEATURE 3 (STEP D): Edit Student - Fill Form & Switch to Edit Mode
-// (UNCOMMENT to enable)
+// TASK 1B: switch on the function that fills the form when you click Edit
 // ============================================================================
-function startEditingStudent(student) {
-  editingStudentId = student._id;
-
-  // 1. Highlight the active row being edited
-  document.querySelectorAll('#student-table-body tr').forEach(r => r.style.backgroundColor = '');
-  const activeRow = document.getElementById(`student-row-${student._id}`);
-  if (activeRow) {
-    activeRow.style.backgroundColor = '#fef9c3';
-  }
-
-  // 2. Populate form fields
-  nameInput.value = student.name;
-  usnInput.value = student.usn;
-  semesterInput.value = student.semester;
-  branchInput.value = student.branch;
-
-  // 3. Switch form UI to Update mode
-  formHeading.textContent = `Edit Student: ${student.name}`;
-  submitBtn.textContent = 'Update Student';
-  submitBtn.className = 'btn btn-primary';
-  if (cancelEditBtn) cancelEditBtn.style.display = 'inline-block';
-
-  // 4. Smooth-scroll directly to the form so the user immediately sees it
-  studentForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
-  nameInput.focus();
-
-  showNotification(`Editing ${student.name}. Modify fields and click Update Student.`, 'warning');
-}
+// ───── TASK 1B ─────
+// function startEditingStudent(student) {
+//   editingStudentId = student._id;
+//
+//   // 1. Highlight the active row being edited
+//   document.querySelectorAll('#student-table-body tr').forEach(r => r.style.backgroundColor = '');
+//   const activeRow = document.getElementById(`student-row-${student._id}`);
+//   if (activeRow) {
+//     activeRow.style.backgroundColor = '#fef9c3';
+//   }
+//
+//   // 2. Populate form fields
+//   nameInput.value = student.name;
+//   usnInput.value = student.usn;
+//   semesterInput.value = student.semester;
+//   branchInput.value = student.branch;
+//
+//   // 3. Switch form UI to Update mode
+//   formHeading.textContent = `Edit Student: ${student.name}`;
+//   submitBtn.textContent = 'Update Student';
+//   submitBtn.className = 'btn btn-primary';
+//   if (cancelEditBtn) cancelEditBtn.style.display = 'inline-block';
+//
+//   // 4. Smooth-scroll directly to the form so the user immediately sees it
+//   studentForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
+//   nameInput.focus();
+//
+//   showNotification(`Editing ${student.name}. Modify fields and click Update Student.`, 'warning');
+// }
+// ───── END TASK 1B ─────
 
 if (cancelEditBtn) {
   cancelEditBtn.addEventListener('click', () => {
@@ -237,18 +235,21 @@ studentForm.addEventListener('submit', async (e) => {
 
   try {
     let response;
-    let isEditing = Boolean(editingStudentId);
+    const isEditing = Boolean(editingStudentId);
 
-    // ========================================================================
-    // FEATURE 3 (STEP E): If editing, send PUT. Otherwise, send POST!
-    // ========================================================================
-    if (isEditing) {
-      response = await fetch(`${API_BASE}/${editingStudentId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-    } else {
+    // TASK 1C: switch on the PUT request used when you are editing a student
+    // ───── TASK 1C ─────
+    // if (isEditing) {
+    //   response = await fetch(`${API_BASE}/${editingStudentId}`, {
+    //     method: 'PUT',
+    //     headers: { 'Content-Type': 'application/json' },
+    //     body: JSON.stringify(payload)
+    //   });
+    // }
+    // ───── END TASK 1C ─────
+
+    // Not editing (or TASK 1C not switched on yet): create a new student with POST
+    if (!response) {
       response = await fetch(API_BASE, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -301,31 +302,33 @@ async function deleteStudent(id, name) {
 }
 
 // ============================================================================
-// FEATURE 5: Live Search with 300ms Debounce
+// TASK 2: switch on live search (waits 300 ms after you stop typing)
 // ============================================================================
-if (searchInput) {
-  searchInput.addEventListener('input', (e) => {
-    clearTimeout(searchDebounceTimeout);
-    const query = e.target.value;
-
-    if (clearSearchBtn) {
-      clearSearchBtn.style.display = query ? 'inline-block' : 'none';
-    }
-
-    // Wait 300ms after last keystroke before querying backend
-    searchDebounceTimeout = setTimeout(() => {
-      loadStudents(query);
-    }, 300);
-  });
-}
-
-if (clearSearchBtn) {
-  clearSearchBtn.addEventListener('click', () => {
-    searchInput.value = '';
-    clearSearchBtn.style.display = 'none';
-    loadStudents('');
-  });
-}
+// ───── TASK 2 ─────
+// if (searchInput) {
+//   searchInput.addEventListener('input', (e) => {
+//     clearTimeout(searchDebounceTimeout);
+//     const query = e.target.value;
+//
+//     if (clearSearchBtn) {
+//       clearSearchBtn.style.display = query ? 'inline-block' : 'none';
+//     }
+//
+//     // Wait 300ms after last keystroke before querying backend
+//     searchDebounceTimeout = setTimeout(() => {
+//       loadStudents(query);
+//     }, 300);
+//   });
+// }
+//
+// if (clearSearchBtn) {
+//   clearSearchBtn.addEventListener('click', () => {
+//     searchInput.value = '';
+//     clearSearchBtn.style.display = 'none';
+//     loadStudents('');
+//   });
+// }
+// ───── END TASK 2 ─────
 
 // Initial load
 document.addEventListener('DOMContentLoaded', () => loadStudents());

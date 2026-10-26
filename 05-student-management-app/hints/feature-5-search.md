@@ -1,5 +1,8 @@
 # Hints for Feature 5: Debounced Live Search
 
+> **Note:** the finished code for this feature is already in `public/script.js`, switched off with `//` (search for `TASK 2`). These hints explain *how it works*. Read them after you have tried the task.
+
+
 ### Goal
 As the user types into the search box, query `GET /students?search=...` to filter by name or USN. Use debouncing to prevent firing an API call on every single keystroke.
 

@@ -1,154 +1,117 @@
-# Step 04: Frontend Integration with Fetch API (Module 4)
+# Step 4: Connect the web page to your server
 
-## Goal
-Connect a vanilla HTML/CSS/JavaScript user interface to your Express and MongoDB backend. Configure Express to serve static frontend files with `express.static`, use the browser's native `fetch()` API with `async/await` to perform `GET` and `POST` operations, prevent Cross-Site Scripting (XSS), display inline feedback messages, and implement a student deletion feature.
+⏱ About 30 minutes · 🖥️ VS Code terminal · 🌐 Browser · 🍃 Compass shell
 
----
+**You will:** open a real web page that shows your students, add one from the page, and switch on the Delete button.
 
-## Concepts
-Modern web applications separate the client interface from the database layer through an intermediary REST API. When a user submits an HTML form, client-side JavaScript intercepts the event (`e.preventDefault()`), packs the input fields into a JSON payload, and sends an asynchronous HTTP request using `fetch()`. The Express backend handles the route, updates MongoDB, and responds with JSON data that JavaScript dynamically inserts into the HTML Document Object Model (DOM) without triggering a full page reload.
-
----
-
-## Full-Stack Request/Response Lifecycle
+**How a click becomes data:**
 
 ```
-[ Browser UI ]
-   │  1. User fills form and clicks "Add Student"
-   │  2. JavaScript e.preventDefault() stops page reload
-   ▼
-[ fetch() POST /students ]  ──(HTTP JSON Payload)──▶  [ Express API Route ]
-                                                           │  3. Validates body
-                                                           │  4. studentsCollection.insertOne()
-                                                           ▼
-                                                      [ MongoDB CollegeDB ]
-                                                           │  5. Generates _id & saves document
-                                                           ▼
-[ DOM Table Updated ]  ◀──(201 Created JSON)─────────  [ Express API ]
-   6. Inline success alert displayed
-   7. Student row rendered dynamically
+You click a button → the page's JavaScript calls fetch() → Express receives the request
+→ MongoDB does the work → Express replies → the page redraws the table
 ```
+
+The server already has all 5 routes and also serves the page itself (`express.static`), so there is nothing to change on the server in this step.
 
 ---
 
-## Instructor Demo Steps
+## Part 1: Run it
 
-Follow along step-by-step:
+**1. Stop any old server** (`Ctrl + C` in its terminal).
 
-### 1. Serve Static Frontend Files in Express
-In `server.js`, configure Express to serve the `public/` directory:
-```javascript
-const path = require('path');
-
-// Place above route definitions:
-app.use(express.static(path.join(__dirname, 'public')));
-```
-Now visiting `http://127.0.0.1:3000/` automatically serves `public/index.html`!
-
----
-
-### 2. Fetch and Render Student List (`GET /students`)
-In `public/script.js`, retrieve all student records from MongoDB and render them into the HTML table:
+**2. Reset the data.** 🍃 Compass shell, paste this one line:
 
 ```javascript
-async function loadStudents() {
-  try {
-    const response = await fetch('/students');
-    const students = await response.json();
-    renderStudentTable(students);
-  } catch (error) {
-    showNotification('Error loading students', 'error');
-  }
-}
+use("CollegeDB"); db.students.drop(); db.createCollection("students"); db.students.createIndex({ usn: 1 }, { unique: true }); db.students.insertMany([{ name: "Rahul", usn: "1CS23CS001", semester: 3, branch: "CSE" }, { name: "Priya", usn: "1CS23CS002", semester: 3, branch: "CSE" }, { name: "Amit", usn: "1CS23CS003", semester: 5, branch: "ISE" }, { name: "Sneha", usn: "1CS23CS004", semester: 4, branch: "ECE" }, { name: "Vikram", usn: "1CS23CS005", semester: 6, branch: "AIML" }])
 ```
 
-> **Security Rule: Never use raw `innerHTML` with user data!**
-> Inserting unescaped user text directly via `innerHTML` opens your app to Cross-Site Scripting (XSS) attacks. Always sanitize text with a utility like `escapeHtml()`:
-> ```javascript
-> function escapeHtml(str) {
->   const div = document.createElement('div');
->   div.textContent = str;
->   return div.innerHTML;
-> }
-> ```
+**3. Start the server.** 🖥️ From the top folder of the lab:
+
+```powershell
+cd 04-frontend-fetch/start
+node server.js
+```
+
+✅ You should see three lines ending with `Server running on port 3000`.
+
+**4. Open the web page.** 🌐
+
+```
+http://127.0.0.1:3000/
+```
+
+> Use this address. Do **not** double-click `index.html`: a page opened as a file cannot talk to the server.
+
+✅ You should see **RVCE Student Management System**, a form, and a table with **5 students** (the number badge says 5).
 
 ---
 
-### 3. Handle Form Submission (`POST /students`)
-Intercept the form submit, package the inputs into JSON, and send a `POST` request:
+## Part 2: Add a student from the page
+
+1. Fill the form: Name `Kavya`, USN `1CS23CS010`, Semester `3`, any Branch.
+2. Click **Add Student**.
+
+✅ A green banner says `Student Kavya (1CS23CS010) added successfully!` and the table now has **6 rows**, with no page reload.
+
+3. Fill the **same form again** and click **Add Student**.
+
+✅ A red error banner appears, and the table stays at 6. The server refused the duplicate USN.
+
+---
+
+## Part 3: Watch the page talk to the server (optional, 2 minutes)
+
+Press `F12`, open the **Network** tab, then add another student (a new USN). You see a `POST` request to `students`. Click it: its status is `201`. Every button on the page works this way.
+
+---
+
+## Your turn: switch on the Delete button
+
+**1. See the problem first.** With the **Console** tab open (`F12 → Console`), click the red **Delete** button next to Kavya.
+
+✅ Nothing happens on the page, and the Console shows a red error: `ReferenceError: deleteStudent is not defined`. The button is calling a function that is switched off.
+
+**2. Switch it on.**
+
+1. In VS Code open `public/script.js` (inside `04-frontend-fetch/start`).
+2. Press `Ctrl + F` and search `TASK`. Go to the line `// ───── TASK ─────` near the bottom.
+3. Select every line **between** `TASK` and `END TASK`: click the first `// async function deleteStudent` line, hold `Shift`, click the last `// }` line.
+4. Press `Ctrl + /` (Mac: `Cmd + /`).
+5. Save (`Ctrl + S`).
+
+**3. Reload the page with `Ctrl + F5`.** 🌐 You do **not** need to restart the server, because only the page changed.
+
+**4. Try Delete again.** Click **Delete** next to Kavya.
+
+✅ A box asks `Are you sure you want to delete Kavya?` Click **OK**. A green banner says `Student Kavya deleted successfully!`, her row disappears, and the table is back to **5 rows**.
+
+**5. Check the database.** 🍃
 
 ```javascript
-studentForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-
-  const payload = {
-    name: nameInput.value.trim(),
-    usn: usnInput.value.trim().toUpperCase(),
-    semester: parseInt(semesterInput.value, 10),
-    branch: branchInput.value
-  };
-
-  const response = await fetch('/students', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  });
-
-  const data = await response.json();
-  if (response.ok) {
-    showNotification(`Student ${data.name} added!`, 'success');
-    studentForm.reset();
-    loadStudents(); // Re-render table!
-  } else {
-    showNotification(data.error || 'Failed to add student', 'error');
-  }
-});
+db.students.countDocuments({ usn: "1CS23CS010" })
 ```
 
----
-
-## Your Turn: Implement the Delete Action
-
-1. Open `public/script.js` in your editor.
-2. Locate the skeleton `deleteStudent(id, name)` function at the bottom:
-3. Implement the function so that:
-   - It prompts the user for confirmation using `window.confirm(`Are you sure you want to delete ${name}?`)`.
-   - If confirmed, it makes an asynchronous `DELETE` request to `/students/${id}`:
-     ```javascript
-     const response = await fetch(`/students/${id}`, { method: 'DELETE' });
-     ```
-   - If `response.ok`, show an inline notification `Student deleted successfully` and call `loadStudents()` to refresh the table.
-   - If not ok, display the error message returned from the backend.
-4. Save the file, refresh your browser, and click the **Delete** button next to any student. Verify that the student disappears from the table and is removed from MongoDB Compass!
+✅ You should see: `0`
 
 ---
 
-## Checkpoint Checklist
-- [ ] Served static frontend via `express.static(path.join(__dirname, 'public'))`.
-- [ ] Opened `http://127.0.0.1:3000/` in the browser and saw the Student Management UI.
-- [ ] Existing students from Step 01 automatically populate the table upon load.
-- [ ] Added a new student using the form; verified table updates instantly without page reload.
-- [ ] Attempted adding a student with a duplicate USN; verified inline error banner displays.
-- [ ] Completed "Your Turn": Clicked **Delete**, confirmed the prompt, and verified student is removed.
+## Done when
 
----
-
-## Expected Output
-**Browser UI:**
-- Top header: *RVCE Student Management System*
-- Form fields: Name, USN, Semester, Branch, and "Add Student" button
-- Green alert banner: *Student Kavya (1CS23CS010) added successfully!*
-- Table row showing USN in bold, Name, Semester, Branch badge, and red **Delete** button.
+- [ ] The page at `http://127.0.0.1:3000/` shows the 5 students
+- [ ] You added Kavya from the form and saw the green banner
+- [ ] Delete works: confirm box, green banner, row gone
+- [ ] `db.students.countDocuments({ usn: "1CS23CS010" })` shows `0`
 
 ---
 
 ## Stuck?
-- **Form submission reloads the page and loses state**:
-  - Did you call `e.preventDefault();` as the first line of your submit event handler?
-- **Console error: `Failed to fetch` or `CORS error`**:
-  - Verify that the Node server is running in terminal (`node server.js`).
-  - Make sure you are accessing the page via `http://127.0.0.1:3000` (NOT opening `index.html` as a `file:///` URI).
-- **Table shows `[object Object]`**:
-  - Make sure you are reading properties (`student.name`, `student.usn`) rather than passing the whole object.
-- **Behind?**:
-  - Compare your files with `04-frontend-fetch/snapshot/` or copy them to your directory.
+
+| What you see | Why | Fix |
+| :--- | :--- | :--- |
+| Page says it could not connect | The server is not running | `node server.js` in `04-frontend-fetch/start` |
+| Blank page or `file:///` in the address bar | You opened the file directly | Use `http://127.0.0.1:3000/` |
+| Delete still does nothing after your change | The browser kept the old script | `Ctrl + F5`. Also check you saved |
+| `Cannot find module` | Packages not installed | `cd ../..` then `npm install --omit=dev` |
+| `EADDRINUSE` | An old server is running | `Ctrl + C` in its terminal |
+| Table has the wrong students | Leftover data from Step 3 | Reset (Part 1, step 2) |
+| Need the finished code | | See **Fell behind?** in the top README |

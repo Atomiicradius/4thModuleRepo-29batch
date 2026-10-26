@@ -1,95 +1,153 @@
-# Step 05: Major Hands-on Project - Student Management App
+# Step 5: Finish the Student Management App
 
-## Goal
-Build a complete, production-style, database-backed Student Management Web Application from guided tasks. Implement all six core features: **Add**, **View**, **Edit (PUT)**, **Delete**, **Debounced Live Search**, and conduct a **Full-Stack Persistence Test**.
+⏱ About 75 minutes · 🖥️ VS Code terminal · 🌐 Browser · 🍃 Compass shell
 
----
+**You will:** switch on **Edit** and **live Search**, then prove your data survives a server restart.
 
-## Concepts
-A full-stack application brings together the frontend client (HTML presentation, CSS styling, and DOM manipulation via vanilla JavaScript), a REST API server (Node.js and Express handling HTTP routing and validation), and a durable document database (MongoDB persisting records to disk). In this capstone exercise of Day 4, you tie every individual building block from earlier modules into a cohesive system that handles real-world workflows such as live asynchronous searching and form state switching between creation and updates.
+**What already works:** adding students, showing them in a table, and deleting them. **What you switch on:** Edit (three small blocks, `TASK 1A`, `1B`, `1C`) and Search (`TASK 2`).
 
 ---
 
-## Feature Breakdown: What's Already Done vs What You Build
+## Part 1: Run the app
 
-To avoid hunting for missing code, understand that **your `start/` code already includes the foundation from Step 04**:
+**1. Stop any old server** (`Ctrl + C` in its terminal).
 
-| Feature | Status at Start of Step 05 | What You Need To Do |
-| :--- | :---: | :--- |
-| **Feature 1: Add Student** | ✅ Already Built (Step 04) | Functional! Try adding a student to verify. |
-| **Feature 2: View Students** | ✅ Already Built (Step 04) | Functional! Renders table with count badge & XSS escaping. |
-| **Feature 4: Delete Student** | ✅ Already Built (Step 04) | Functional! Confirm dialog and `DELETE` work. |
-| **Feature 3: Edit Student (PUT)** | 🛠️ **YOUR TASK 1** | Wire Edit button, fill form, toggle "Update", send `PUT`. |
-| **Feature 5: Debounced Search** | 🛠️ **YOUR TASK 2** | Add debounced input (300ms) to call `GET /students?search=`. |
-| **Feature 6: Persistence Test** | 🧪 **YOUR TASK 3** | Add records, shut down server with `Ctrl+C`, restart, verify. |
+**2. Reset the data.** 🍃 Compass shell, paste this one line:
 
----
+```javascript
+use("CollegeDB"); db.students.drop(); db.createCollection("students"); db.students.createIndex({ usn: 1 }, { unique: true }); db.students.insertMany([{ name: "Rahul", usn: "1CS23CS001", semester: 3, branch: "CSE" }, { name: "Priya", usn: "1CS23CS002", semester: 3, branch: "CSE" }, { name: "Amit", usn: "1CS23CS003", semester: 5, branch: "ISE" }, { name: "Sneha", usn: "1CS23CS004", semester: 4, branch: "ECE" }, { name: "Vikram", usn: "1CS23CS005", semester: 6, branch: "AIML" }])
+```
 
-## Your Hands-On Tasks in Step 05
+**3. Start the server.** 🖥️ From the top folder of the lab:
 
-Refer to the hint files in `hints/` if you need guidance:
+```powershell
+cd 05-student-management-app/start
+node server.js
+```
 
-- [ ] **Task 1: Feature 3 — Edit Student & Form Mode Toggle** ([Hints: hints/feature-3-edit.md](hints/feature-3-edit.md))
-  - When the user clicks "Edit" on a student row:
-    - Store the student's `_id` in a state variable (`let editingStudentId = student._id`).
-    - Populate the input fields (Name, USN, Semester, Branch).
-    - Change submit button text from "Add Student" to "Update Student".
-    - Reveal the "Cancel Edit" button.
-  - When submitted in edit mode, send `PUT /students/:editingStudentId`.
-  - When "Cancel Edit" is clicked, reset form to "Add Student" mode.
+✅ Three lines, ending with `Server running on port 3000`.
 
-- [ ] **Task 2: Feature 5 — Debounced Live Search** ([Hints: hints/feature-5-search.md](hints/feature-5-search.md))
-  - Add search input field above the table.
-  - Listen to the `input` event and apply a 300ms debounce timer with `setTimeout`.
-  - Query `GET /students?search=<query>` to filter by Name or USN.
-  - Connect the "Clear" button to restore all records.
+**4. Open the app.** 🌐 `http://127.0.0.1:3000/`
 
-- [ ] **Task 3: Feature 6 — Full-Stack Persistence Verification** ([Hints: hints/feature-6-persistence.md](hints/feature-6-persistence.md))
-  - Add and edit student records in the UI.
-  - Refresh the browser (`Ctrl + F5`) and confirm records persist.
-  - Stop the Node server (`Ctrl + C`) and restart it (`node server.js`).
-  - Refresh browser and confirm all records remain intact in MongoDB.
-  - Verify stored records inside MongoDB Compass.
+✅ You see the form, a **Search** box, and a table with **5 students**.
+
+**5. See what is missing.** Click **Edit** next to Rahul: nothing happens. Type `ami` in the search box and wait a second: the table does not change. These are your two tasks.
 
 ---
 
-## Stretch Goals (For Early Finishers)
-1. **Branch Filter Dropdown:** Add a `<select id="branch-filter">` to filter the table by department (CSE, ISE, AIML, etc.) without page reload.
-2. **Column Sorting:** Click on the "Name" or "Semester" table header to sort students ascending or descending.
-3. **Toast Notifications:** Replace the banner with floating, auto-dismissing toast notifications in the top-right corner.
+## Task 1: Switch on Edit (3 blocks)
 
-> 💡 **Pedagogical Note on `snapshot/` and `reference/`:**
-> The finished code in `snapshot/` and `reference/` is provided as an educational safety net so you can inspect working implementations or catch up if you fall behind. **Challenge yourself to build Features 3, 5, and 6 using only the `hints/` files first!** (Instructors may also opt to withhold the `reference/` folder until the end of the lab session).
+All the code is already in `public/script.js`, switched off with `//`. Switch on the three blocks:
+
+| Block | Search for | What it does |
+| :--- | :--- | :--- |
+| **1A** | `TASK 1A` | Makes the **Edit** buttons do something |
+| **1B** | `TASK 1B` | A function that fills the form with the student you clicked |
+| **1C** | `TASK 1C` | When you press **Update**, send a `PUT` request instead of creating a new student |
+
+**For each block** (open `05-student-management-app/start/public/script.js`):
+
+1. Press `Ctrl + F` and search for the block's name, for example `TASK 1A`.
+2. Select every line **between** `// ───── TASK 1A ─────` and `// ───── END TASK 1A ─────`: click the first commented line, hold `Shift`, click the last one.
+3. Press `Ctrl + /` (Mac: `Cmd + /`).
+
+When all three are done, **save** (`Ctrl + S`) and reload the page with **`Ctrl + F5`**. You do not need to restart the server.
+
+**Test it.** 🌐
+
+1. Click **Edit** next to **Rahul**.
+
+   ✅ The heading says `Edit Student: Rahul`, the button says **Update Student**, a **Cancel Edit** button appears, the form is filled in, and his row turns yellow.
+
+2. Change **Semester** to `4` and click **Update Student**.
+
+   ✅ A banner says `Student Rahul updated successfully!` His row shows Semester 4, and the form goes back to "Add New Student".
+
+3. Click **Edit** next to **Priya**, then click **Cancel Edit**.
+
+   ✅ The form empties and goes back to Add mode. Nothing changed in the table.
 
 ---
 
-## Checkpoint Checklist
-- [ ] Started server with `node server.js` inside `05-student-management-app/start`.
-- [ ] Added at least 3 students via the UI form.
-- [ ] Tested duplicate USN validation; confirmed inline error alert appears.
-- [ ] Edited a student's semester using the Edit button and verified `PUT` updates the database.
-- [ ] Deleted a student after confirmation prompt.
-- [ ] Typed in search box and verified live debounced filtering works.
-- [ ] Restarted server and verified full database persistence.
+## Task 2: Switch on live Search
+
+**1.** Search for `TASK 2` in `script.js`. Select the lines between `// ───── TASK 2 ─────` and `// ───── END TASK 2 ─────`, press `Ctrl + /`, save, and reload with `Ctrl + F5`.
+
+**2. Test it.** 🌐 Click in the search box and type `ami`.
+
+✅ The table does **not** change while you type. About a third of a second after you **stop** typing, it shrinks to **1 row: Amit**. (This wait is called *debouncing*: it avoids asking the server after every single key.)
+
+**3.** Click **Clear**.
+
+✅ All **5 students** come back.
+
+Try also: `1cs` shows everyone (every USN contains 1CS), and `xyz` shows an empty table.
 
 ---
 
-## Expected Output
-**Browser UI Features:**
-- Header: *RVCE Student Management System*
-- Form: Name, USN, Semester, Branch, and dynamic "Add Student" / "Update Student" button.
-- Search box: Debounced input with Clear button.
-- Table: Rows with USN in bold, Name, Semester, Branch badge, and Edit / Delete action buttons.
-- Persistence: Data remains identical across browser reloads and server restarts.
+## Task 3: Prove your data is really saved
+
+**1.** Reload the page with `Ctrl + F5`.
+
+✅ Rahul still shows **Semester 4**.
+
+**2.** Stop the server: 🖥️ click in the terminal and press `Ctrl + C`. Start it again:
+
+```powershell
+node server.js
+```
+
+**3.** Reload the page. 🌐
+
+✅ Rahul still shows **Semester 4**. The data lives in MongoDB, not in the server, so it survived the restart.
+
+**4.** Look at it in the database. 🍃
+
+```javascript
+use("CollegeDB")
+```
+
+```javascript
+db.students.findOne({ usn: "1CS23CS001" })
+```
+
+✅ You see Rahul with `semester: 4`.
+
+**5.** Add a student and delete one, to check the other two buttons still work.
+
+✅ Add: `Student ... added successfully!` Delete: a confirm box, then `Student ... deleted successfully.`
+
+---
+
+## Done when
+
+- [ ] **Edit** fills the form, **Update Student** saves, and **Cancel Edit** works
+- [ ] Typing in **Search** filters the table, and **Clear** restores it
+- [ ] After stopping and restarting the server, your changes are still there
+- [ ] The Console (`F12 → Console`) shows no red errors
+
+---
+
+## Stretch goals (if you finish early)
+
+1. **Branch filter:** add a drop-down that shows only one branch (CSE, ISE, AIML...) without reloading.
+2. **Sorting:** click the **Name** or **Semester** column heading to sort the table.
+3. **Toast messages:** replace the banner with small pop-ups in the top-right corner that disappear by themselves.
+
+Explanations of how Edit, Search and persistence work are in the [`hints`](hints) folder. Read them after you try, not before.
 
 ---
 
 ## Stuck?
-- **Edit mode doesn't know which student to update**:
-  - Keep a global `let editingStudentId = null;` variable. Store the `_id` when Edit is clicked, and check `if (editingStudentId)` when submitting.
-- **Search sends requests on every single key typed**:
-  - Make sure you clear the old timeout before starting a new one:
-    `clearTimeout(searchDebounceTimeout); searchDebounceTimeout = setTimeout(...);`
-- **Need help?**:
-  - Read through each feature's file in `05-student-management-app/hints/`.
-  - Review the complete solution in `05-student-management-app/snapshot/` or `reference/`.
+
+| What you see | Why | Fix |
+| :--- | :--- | :--- |
+| Clicking **Edit** does nothing | `TASK 1A` or `TASK 1B` is not switched on, or the page was not reloaded | Switch both on, save, `Ctrl + F5` |
+| Console says `startEditingStudent is not defined` | `TASK 1A` is on but `TASK 1B` is off | Switch on `TASK 1B` |
+| **Update Student** shows the error `A student with USN ... already exists` | `TASK 1C` is off, so the page tries to **create** a copy | Switch on `TASK 1C`, save, `Ctrl + F5` |
+| Search box does nothing | `TASK 2` is off | Switch it on, save, `Ctrl + F5` |
+| You changed the file but the page looks the same | The browser kept the old script | `Ctrl + F5` |
+| `SyntaxError` in the Console | A line lost its `//` only halfway | Select the whole block again and check every line |
+| Page cannot connect | The server is not running | `node server.js` in `05-student-management-app/start` |
+| `EADDRINUSE` | An old server is running | `Ctrl + C` in its terminal |
+| Need the finished code | | See **Fell behind?** in the top README |

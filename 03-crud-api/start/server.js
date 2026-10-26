@@ -106,21 +106,9 @@ app.get('/', (req, res) => {
 // ============================================================================
 // app.get('/students', async (req, res) => {
 //   try {
-//     const { search } = req.query;
-//     let filter = {};
-
-//     if (search && search.trim() !== '') {
-//       const cleanSearch = escapeRegex(search.trim());
-//       const regex = new RegExp(cleanSearch, 'i');
-//       filter = {
-//         $or: [
-//           { name: { $regex: regex } },
-//           { usn: { $regex: regex } }
-//         ]
-//       };
-//     }
-
-//     const students = await studentsCollection.find(filter).toArray();
+//     // TASK (search): after you uncomment this route, replace the next line
+//     // with the search code from the README (Part 3).
+//     const students = await studentsCollection.find({}).toArray();
 //     res.json(students);
 //   } catch (error) {
 //     console.error('GET /students error:', error);

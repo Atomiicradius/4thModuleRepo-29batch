@@ -75,6 +75,9 @@ function resetFormToCreateMode() {
   submitBtn.className = 'btn btn-primary';
   formHeading.textContent = 'Add New Student';
   if (cancelEditBtn) cancelEditBtn.style.display = 'none';
+
+  // Clear table highlights
+  document.querySelectorAll('#student-table-body tr').forEach(r => r.style.backgroundColor = '');
 }
 
 // ============================================================================
@@ -180,18 +183,30 @@ function renderStudentTable(students, currentQuery = '') {
 function startEditingStudent(student) {
   editingStudentId = student._id;
 
+  // 1. Highlight the active row being edited
+  document.querySelectorAll('#student-table-body tr').forEach(r => r.style.backgroundColor = '');
+  const activeRow = document.getElementById(`student-row-${student._id}`);
+  if (activeRow) {
+    activeRow.style.backgroundColor = '#fef9c3';
+  }
+
+  // 2. Populate form fields
   nameInput.value = student.name;
   usnInput.value = student.usn;
   semesterInput.value = student.semester;
   branchInput.value = student.branch;
 
+  // 3. Switch form UI to Update mode
   formHeading.textContent = `Edit Student: ${student.name}`;
   submitBtn.textContent = 'Update Student';
   submitBtn.className = 'btn btn-primary';
   if (cancelEditBtn) cancelEditBtn.style.display = 'inline-block';
 
+  // 4. Smooth-scroll directly to the form so the user immediately sees it
+  studentForm.scrollIntoView({ behavior: 'smooth', block: 'center' });
   nameInput.focus();
-  showNotification(`Editing ${student.name}. Modify fields and click Update.`, 'warning');
+
+  showNotification(`Editing ${student.name}. Modify fields and click Update Student.`, 'warning');
 }
 
 if (cancelEditBtn) {
@@ -287,31 +302,30 @@ async function deleteStudent(id, name) {
 
 // ============================================================================
 // FEATURE 5: Live Search with 300ms Debounce
-// (UNCOMMENT the block below to enable live search filtering!)
 // ============================================================================
-// if (searchInput) {
-//   searchInput.addEventListener('input', (e) => {
-//     clearTimeout(searchDebounceTimeout);
-//     const query = e.target.value;
-// 
-//     if (clearSearchBtn) {
-//       clearSearchBtn.style.display = query ? 'inline-block' : 'none';
-//     }
-// 
-//     // Wait 300ms after last keystroke before querying backend
-//     searchDebounceTimeout = setTimeout(() => {
-//       loadStudents(query);
-//     }, 300);
-//   });
-// }
-// 
-// if (clearSearchBtn) {
-//   clearSearchBtn.addEventListener('click', () => {
-//     searchInput.value = '';
-//     clearSearchBtn.style.display = 'none';
-//     loadStudents('');
-//   });
-// }
+if (searchInput) {
+  searchInput.addEventListener('input', (e) => {
+    clearTimeout(searchDebounceTimeout);
+    const query = e.target.value;
+
+    if (clearSearchBtn) {
+      clearSearchBtn.style.display = query ? 'inline-block' : 'none';
+    }
+
+    // Wait 300ms after last keystroke before querying backend
+    searchDebounceTimeout = setTimeout(() => {
+      loadStudents(query);
+    }, 300);
+  });
+}
+
+if (clearSearchBtn) {
+  clearSearchBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearSearchBtn.style.display = 'none';
+    loadStudents('');
+  });
+}
 
 // Initial load
 document.addEventListener('DOMContentLoaded', () => loadStudents());

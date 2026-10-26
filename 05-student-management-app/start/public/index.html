@@ -47,8 +47,29 @@
           </div>
         </div>
 
-        <button type="submit" id="submit-btn" class="btn btn-primary">Add Student</button>
+        <div class="form-actions">
+          <button type="submit" id="submit-btn" class="btn btn-primary">Add Student</button>
+          <button type="button" id="cancel-edit-btn" class="btn btn-secondary" style="display: none;">Cancel Edit</button>
+        </div>
       </form>
+    </section>
+
+    <!-- Section 2: Search & Filter -->
+    <section class="card" aria-labelledby="search-heading">
+      <div class="search-bar-container" style="display: flex; gap: 12px; align-items: flex-end;">
+        <div class="form-group" style="flex: 1;">
+          <label for="search-input">Search Students (Live Debounced)</label>
+          <input 
+            type="search" 
+            id="search-input" 
+            placeholder="Type student name or USN to filter..."
+            autocomplete="off"
+          >
+        </div>
+        <button type="button" id="clear-search-btn" class="btn btn-secondary" style="height: 42px;">
+          Clear
+        </button>
+      </div>
     </section>
 
     <section class="card" aria-labelledby="list-heading">

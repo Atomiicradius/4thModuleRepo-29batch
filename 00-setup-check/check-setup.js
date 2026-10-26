@@ -28,7 +28,7 @@ const BOLD = '\x1b[1m';
 const RESET = '\x1b[0m';
 
 console.log(`${BOLD}${CYAN}====================================================${RESET}`);
-console.log(`${BOLD}${CYAN}   Day 4: Full Stack Development Skill Lab          ${RESET}`);
+console.log(`${BOLD}${CYAN}    Day 4: Full Stack Development Skill Lab         ${RESET}`);
 console.log(`${BOLD}${CYAN}   Environment & Prerequisite Verification Check    ${RESET}`);
 console.log(`${BOLD}${CYAN}====================================================${RESET}\n`);
 

@@ -45,24 +45,19 @@
 
 // ==========================================
 // YOUR TURN: Hands-On Exercise
+// (UNCOMMENT the blocks below to run or copy/paste into mongosh!)
 // ==========================================
-// Task: Add 3 of your own student records to the students collection!
-// Requirements:
-// 1. Choose unique USNs (e.g., "1CS23CS006", "1CS23CS007", "1CS23CS008")
-// 2. Give them different branches (e.g., "CSE", "ISE", "AIML")
-// 3. Give them semesters between 1 and 8
-//
-// Write your commands below:
-//
-// // YOUR TURN 1: Insert your 3 students using insertMany()
+
+// YOUR TURN 1: Insert 3 students using insertMany()
 // db.students.insertMany([
-//   { /* student 1 */ },
-//   { /* student 2 */ },
-//   { /* student 3 */ }
+//   { name: "Kavya", usn: "1CS23CS006", semester: 3, branch: "CSE" },
+//   { name: "Manoj", usn: "1CS23CS007", semester: 5, branch: "ISE" },
+//   { name: "Divya", usn: "1CS23CS008", semester: 4, branch: "AIML" }
 // ])
-//
-// // YOUR TURN 2: Write a query to find only your students by their branch
-// db.students.find({ /* filter */ })
-//
-// // YOUR TURN 3: Write a query to find all students in semester 3 or higher using $gte
-// db.students.find({ /* filter with $gte */ })
+
+// YOUR TURN 2: Write a query to find only CSE students
+// db.students.find({ branch: "CSE" })
+
+// YOUR TURN 3: Write a query to find all students in semester 3 or higher using $gte
+// db.students.find({ semester: { $gte: 3 } })
+

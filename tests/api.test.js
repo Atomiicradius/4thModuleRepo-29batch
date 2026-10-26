@@ -32,7 +32,12 @@ function startServer() {
       }
     });
 
+    proc.stderr.on('data', (data) => {
+      console.error('  [SERVER STDERR]:', data.toString());
+    });
+
     proc.on('error', (err) => {
+      console.error('  [SERVER ERROR]:', err);
       if (!resolved) {
         resolved = true;
         reject(err);

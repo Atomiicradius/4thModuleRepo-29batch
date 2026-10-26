@@ -12,4 +12,4 @@ db.students.insertMany([
   { name: "Vikram", usn: "1CS23CS005", semester: 6, branch: "AIML" }
 ]);
 
-print("✅ CollegeDB seeded with 5 students.");
+print("CollegeDB seeded with 5 students.");

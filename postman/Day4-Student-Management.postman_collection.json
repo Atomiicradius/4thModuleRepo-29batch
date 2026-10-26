@@ -63,7 +63,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"name\": \"Rahul\",\n  \"usn\": \"1CS23CS001\",\n  \"semester\": 3,\n  \"branch\": \"CSE\"\n}"
+              "raw": "{\n  \"name\": \"Kavya\",\n  \"usn\": \"1CS23CS010\",\n  \"semester\": 3,\n  \"branch\": \"CSE\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/students",
@@ -83,8 +83,8 @@
                   "var jsonData = pm.response.json();",
                   "pm.test('Created student contains _id and correct fields', function () {",
                   "    pm.expect(jsonData).to.have.property('_id');",
-                  "    pm.expect(jsonData.usn).to.eql('1CS23CS001');",
-                  "    pm.expect(jsonData.name).to.eql('Rahul');",
+                  "    pm.expect(jsonData.usn).to.eql('1CS23CS010');",
+                  "    pm.expect(jsonData.name).to.eql('Kavya');",
                   "    pm.expect(jsonData.semester).to.eql(3);",
                   "    pm.expect(jsonData.branch).to.eql('CSE');",
                   "});",

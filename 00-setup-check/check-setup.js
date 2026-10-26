@@ -6,7 +6,7 @@
  * 1. Node.js (version 22+ or 24+ LTS)
  * 2. npm (Node Package Manager)
  * 3. MongoDB Server (service running & accepting connections on 127.0.0.1:27017)
- * 4. mongosh (MongoDB Shell CLI in PATH)
+ * 4. mongosh (optional: MongoDB Compass has a built-in shell)
  * 5. Postman (API testing client installed)
  * 
  * Usage:
@@ -138,11 +138,11 @@ function checkMongosh() {
   if (inPath) {
     reportResult('MongoDB Shell (mongosh)', true, `Detected mongosh v${version}`);
   } else {
+    // mongosh is optional: MongoDB Compass has a built-in shell (the MONGOSH panel).
     reportResult(
-      'MongoDB Shell (mongosh)',
-      false,
-      'mongosh is not found in PATH or standard directories',
-      'Install mongosh via winget ("winget install MongoDB.Shell") or download the MSI from https://www.mongodb.com/try/download/shell and add to PATH.'
+      'MongoDB Shell (mongosh) - optional',
+      true,
+      'Standalone mongosh not installed. That is fine: use the MONGOSH panel inside MongoDB Compass.'
     );
   }
 }

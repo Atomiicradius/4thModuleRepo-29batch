@@ -46,15 +46,21 @@ Before starting Module 2, ensure your Windows lab computer has the required soft
 
 1. **Node.js (v22+ or v24+ LTS)**: Run `node -v` in terminal (Node 20 reached EOL in April 2026; Node 22 or 24 is required).
 2. **MongoDB Community Server**: Local service running on port `27017` (`127.0.0.1`).
-3. **MongoDB Shell (`mongosh`)**: Run `mongosh --version` (v2.x).
+3. **MongoDB Compass**: its built-in **`>_ MONGOSH`** panel is the shell we use, so nothing else is needed. The standalone `mongosh` command (`mongosh --version`, v2.x) is **optional**.
 4. **Postman Desktop**: Installed for API endpoint verification.
 5. **Web Browser**: Chrome, Edge, or Firefox.
 
 ### Fresh Database Reset:
 To ensure previous runs or dry-run experiments don't cause duplicate key errors (`E11000`), reset `CollegeDB` cleanly:
+In the **Compass shell** (`>_ MONGOSH` panel), paste only this line:
+```javascript
+db.getSiblingDB('CollegeDB').dropDatabase()
+```
+Or, if you installed standalone `mongosh`, run this in PowerShell:
 ```powershell
 mongosh --eval "db.getSiblingDB('CollegeDB').dropDatabase()"
 ```
+> Do not paste the `mongosh --eval ...` line into the Compass shell. It is a PowerShell command and gives `SyntaxError: Missing semicolon`.
 
 ### Automated Setup Check:
 Run the built-in diagnostic script inside `00-setup-check`:
@@ -106,7 +112,7 @@ node check-setup.js
 | Step / Module | Topic | Description | Suggested Time |
 | :--- | :--- | :--- | :---: |
 | **Module 1** | **Database Concepts & Architecture** | SQL vs NoSQL, document model, 3-tier architecture *(instructor slides)* | 40 min |
-| **00-setup-check** | **Environment Verification** | Run `check-setup.js` to verify Node, Mongo service, mongosh, Postman | 15 min |
+| **00-setup-check** | **Environment Verification** | Run `check-setup.js` to verify Node, Mongo service, Postman (mongosh is optional) | 15 min |
 | **01-mongodb-shell** | **Module 2: MongoDB Shell** | `use CollegeDB`, `createCollection`, `insertOne`, `insertMany`, `find`, `$gte`, `$set`, `deleteOne`, Compass GUI | 75 min |
 | **02-connect-backend** | **Module 3a: Connect Backend** | `npm init`, `MongoClient`, connection pooling, startup connection, `GET /` health route | 25 min |
 | **03-crud-api** | **Module 3b: Five CRUD Routes** | Build & test in Postman: POST, GET, GET by ID, PUT, DELETE, ObjectId conversion, unique index, `?search=` | 60 min |

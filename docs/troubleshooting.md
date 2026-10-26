@@ -9,6 +9,8 @@ This guide covers every common bug, error message, and stumbling block encounter
 | Error Message / Symptom | Root Cause | Quick Fix |
 | :--- | :--- | :--- |
 | `'mongosh' is not recognized` | `mongosh.exe` directory not in Windows User `PATH` | Run `winget install MongoDB.Shell` or add `%LOCALAPPDATA%\Programs\mongosh` to PATH |
+| `SyntaxError: Missing semicolon` in the Compass shell | You pasted a PowerShell line such as `mongosh --eval "..."` into the shell | Paste only the JavaScript inside the quotes, e.g. `db.getSiblingDB('CollegeDB').dropDatabase()` |
+| `SyntaxError: Unexpected token` after pasting `mongodb://...` | You pasted a connection address into the shell | Put the address in Compass's **New Connection** box instead |
 | `connect ECONNREFUSED 127.0.0.1:27017` | Local MongoDB Windows Service is stopped | Open Admin PowerShell and run: `net start MongoDB` |
 | `EADDRINUSE :::3000` | Another Node process is already using port 3000 | Kill previous node process with `Get-Process node \| Stop-Process -Force` |
 | Query returns `null` for known ID | Queried with string ID instead of `new ObjectId(id)` | Wrap ID: `{ _id: new ObjectId(id) }` from `require('mongodb')` |
@@ -169,7 +171,18 @@ This guide covers every common bug, error message, and stumbling block encounter
 - **Cause:** Previous lab sessions or dry-run tests left documents inside `CollegeDB`.
 - **Resolution:**
   - Cleanly drop the database before running shell exercises:
+    - In the **Compass shell** (`>_ MONGOSH`): `db.getSiblingDB('CollegeDB').dropDatabase()`
+    - In **PowerShell** with standalone `mongosh`:
     ```powershell
     mongosh --eval "db.getSiblingDB('CollegeDB').dropDatabase()"
     ```
 
+---
+
+### 11. Compass Shell vs PowerShell Mix-ups
+- **Symptom:** In the Compass `>_ MONGOSH` panel you see `SyntaxError: Missing semicolon (1:10)` or `SyntaxError: Unexpected token (1:25)`.
+- **Cause:** The Compass shell only understands MongoDB shell JavaScript. You pasted either a PowerShell command (`mongosh --eval "..."`) or a connection address (`mongodb://127.0.0.1:27017`).
+- **Resolution:**
+  - For `mongosh --eval "<command>"`, paste only the `<command>` part into the shell.
+  - Enter `mongodb://127.0.0.1:27017` only in Compass's **New Connection** box, or after `mongosh` in PowerShell.
+  - Use `use("CollegeDB")` and `db.getCollectionNames()`, which work in both shells.

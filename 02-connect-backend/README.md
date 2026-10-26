@@ -122,10 +122,10 @@ Open your browser or Postman and visit `http://127.0.0.1:3000/`.
    });
    ```
 3. Restart your server (`node server.js`) and visit `http://127.0.0.1:3000/ping-db` in your browser. Refresh 2 or 3 times!
-4. Open a second PowerShell terminal, launch `mongosh`, and verify your writes physically hit the database:
+4. Verify your writes physically hit the database. Use the **`>_ MONGOSH`** panel in MongoDB Compass (or a second PowerShell window running `mongosh`):
    ```javascript
-   use CollegeDB
-   show collections
+   use("CollegeDB")
+   db.getCollectionNames()
    db.pings.find()
    ```
    *Notice:* The `pings` collection was dynamically created by your Express code, and each visit inserted a new document with an `_id` and timestamp!

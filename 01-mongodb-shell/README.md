@@ -12,25 +12,31 @@ A MongoDB server holds multiple **databases**, each database contains **collecti
 
 ## Instructor Demo Steps
 
-Follow each step live on the projector.
+Follow each step live on the projector. Every command in this step is **JavaScript typed into a MongoDB shell**. You can use either shell, and the commands are identical:
+
+| | **Option A: Compass shell (recommended)** | **Option B: PowerShell + `mongosh`** |
+| :--- | :--- | :--- |
+| **Needs** | Nothing extra. The shell is built into MongoDB Compass | The separate `mongosh` installer |
+| **Open it** | Open Compass, connect to `mongodb://127.0.0.1:27017`, then click **`>_ MONGOSH`** at the bottom of the window | Open PowerShell and run `mongosh "mongodb://127.0.0.1:27017"` |
+| **Connected?** | Yes, to the connection you opened | Yes, after the command above |
+
+> ⚠️ **Type only the command itself into the shell.** A shell understands JavaScript such as `db.students.find()`. It does **not** understand PowerShell lines that start with `mongosh ...`, or a bare address like `mongodb://127.0.0.1:27017`. If you see `SyntaxError: Missing semicolon` or `SyntaxError: Unexpected token`, you pasted one of those. The address belongs in Compass's **New Connection** box (or after `mongosh` in PowerShell), not in the shell.
+
+> 💡 The commands below use `use("CollegeDB")` and `db.getCollectionNames()`, which work in **both** shells. In PowerShell `mongosh` you may also type the shortcuts `use CollegeDB` and `show collections`.
 
 ### 0. Reset / Clean Database (Start from Scratch)
-Before starting this module, ensure `CollegeDB` is completely clean so duplicate key errors (`E11000`) do not occur from previous runs:
-```powershell
-mongosh --eval "db.getSiblingDB('CollegeDB').dropDatabase()"
+Before starting this module, ensure `CollegeDB` is completely clean so duplicate key errors (`E11000`) do not occur from previous runs. In your open shell, type:
+```javascript
+db.getSiblingDB('CollegeDB').dropDatabase()
 ```
-*Output:* `{ ok: 1, dropped: "CollegeDB" }`
+*Output:* `{ ok: 1, dropped: 'CollegeDB' }`
 
-Open PowerShell and start the interactive MongoDB Shell:
-
-```powershell
-mongosh "mongodb://127.0.0.1:27017"
-```
+*(Standalone `mongosh` users can instead run this one-liner from a normal PowerShell window, **not** inside a shell:* `mongosh --eval "db.getSiblingDB('CollegeDB').dropDatabase()"` *)*
 
 ### 1. Select the Database
 Switch to `CollegeDB`. In MongoDB, if a database does not exist yet, MongoDB creates it as soon as data is inserted:
 ```javascript
-use CollegeDB
+use("CollegeDB")
 ```
 *Output: `switched to db CollegeDB`*
 
@@ -43,9 +49,9 @@ db.createCollection("students")
 
 Confirm your collection exists:
 ```javascript
-show collections
+db.getCollectionNames()
 ```
-*Output: `students`*
+*Output: `[ 'students' ]`*
 
 ### 3. Insert a Single Document (`insertOne`)
 Insert Rahul's record:
@@ -134,7 +140,7 @@ db.students.deleteOne({ usn: "1CS23CS005" })
 ```
 
 ### 8. Verify in MongoDB Compass (GUI)
-1. Launch **MongoDB Compass** from the Windows Start Menu.
+1. Launch **MongoDB Compass** from the Windows Start Menu. (If you are already using the Compass shell, you are connected: skip to step 3 and click the refresh icon next to the connection.)
 2. In the "New Connection" screen, enter URI: `mongodb://127.0.0.1:27017` and click **Connect**.
 3. In the left database list, click **CollegeDB**.
 4. Click the **students** collection.
@@ -158,15 +164,30 @@ Now try it yourself!
 4. Update one of your new students' semester using `updateOne` and `$set`.
 5. Check your new students in MongoDB Compass by clicking the Refresh button (circular arrow).
 
+> **Note:** Amit from the demo is in the `ISE` branch (semester 5), so he will also appear in your ISE and `$gte` results. That is expected.
+
 ---
 
-## Restoring Sample Data (`seed.js`)
-If your collection gets messy or you accidentally delete students, reset everything back to the clean 5 sample students at any time:
+## Restoring Sample Data
+If your collection gets messy or you accidentally delete students, reset everything back to the clean 5 sample students at any time. Pick **one** option.
 
+**Option A: Paste into the shell (works in the Compass shell and in `mongosh`).** Copy this whole line, paste it, and press Enter:
+```javascript
+use("CollegeDB"); db.students.drop(); db.createCollection("students"); db.students.createIndex({ usn: 1 }, { unique: true }); db.students.insertMany([{ name: "Rahul", usn: "1CS23CS001", semester: 3, branch: "CSE" }, { name: "Priya", usn: "1CS23CS002", semester: 3, branch: "CSE" }, { name: "Amit", usn: "1CS23CS003", semester: 5, branch: "ISE" }, { name: "Sneha", usn: "1CS23CS004", semester: 4, branch: "ECE" }, { name: "Vikram", usn: "1CS23CS005", semester: 6, branch: "AIML" }])
+```
+
+**Option B: Import the sample file in Compass (no typing).** Open `students` → **ADD DATA** → **Import JSON or CSV file** → choose `01-mongodb-shell/sample-students.json`. Delete the existing documents first if the collection is not empty.
+
+**Option C: PowerShell script (needs standalone `mongosh`):**
 ```powershell
 mongosh mongodb://127.0.0.1:27017/CollegeDB seed.js
 ```
-*(Or inside `mongosh`: `load("seed.js")`)*
+*(Or inside `mongosh`: `load("seed.js")`. `load()` may not be available in the Compass shell, so use Option A there.)*
+
+**Start completely fresh** (removes the whole `CollegeDB` database):
+```javascript
+db.getSiblingDB('CollegeDB').dropDatabase()
+```
 
 ---
 
@@ -184,8 +205,9 @@ mongosh mongodb://127.0.0.1:27017/CollegeDB seed.js
 ---
 
 ## Expected Output
+Checkpoints from a clean start (your `ObjectId` values will differ):
 ```text
-test> use CollegeDB
+CollegeDB> use("CollegeDB")
 switched to db CollegeDB
 
 CollegeDB> db.createCollection("students")
@@ -197,8 +219,14 @@ CollegeDB> db.students.insertOne({ name: "Rahul", usn: "1CS23CS001", semester: 3
   insertedId: ObjectId('662b1a8f9c2d1e001f3b4c51')
 }
 
-CollegeDB> db.students.countDocuments()
+CollegeDB> db.students.countDocuments()   // after insertOne
+1
+CollegeDB> db.students.countDocuments()   // after insertMany (4 more)
 5
+CollegeDB> db.students.countDocuments()   // after deleting Vikram
+4
+CollegeDB> db.students.countDocuments()   // after adding your own 3 students
+7
 ```
 
 ---
@@ -206,7 +234,13 @@ CollegeDB> db.students.countDocuments()
 ## Stuck?
 - **Error: `connect ECONNREFUSED 127.0.0.1:27017`**:
   - The MongoDB background service is stopped. Open Command Prompt as Administrator and run `net start MongoDB`.
+- **Error: `SyntaxError: Missing semicolon` (after pasting `mongosh --eval "..."`)**:
+  - That line is a PowerShell command, not shell JavaScript. Paste only the part inside the quotes, for example `db.getSiblingDB('CollegeDB').dropDatabase()`.
+- **Error: `SyntaxError: Unexpected token` (after pasting `mongodb://127.0.0.1:27017`)**:
+  - That is a connection address, not a command. It goes in Compass's **New Connection** box, not in the shell.
+- **Error: `E11000 duplicate key` when re-running the inserts**:
+  - The students already exist. Reset with one of the options under **Restoring Sample Data**.
 - **Error: `ReferenceError: db is not defined`**:
-  - Make sure you are inside the `mongosh` prompt and not Windows PowerShell.
+  - Make sure you are inside a MongoDB shell (the **`>_ MONGOSH`** panel in Compass, or the `mongosh` prompt) and not plain PowerShell.
 - **Lost or corrupted student data?**:
-  - Run `mongosh mongodb://127.0.0.1:27017/CollegeDB seed.js` to restore the original 5 documents.
+  - Use one of the options under **Restoring Sample Data** to restore the original 5 documents.

@@ -50,7 +50,7 @@ Before building full-stack applications, your local developer environment requir
 - [ ] Ran `node check-setup.js` in terminal.
 - [ ] Node.js Runtime passes (v22.0.0 or v24.0.0+ LTS).
 - [ ] npm passes.
-- [ ] mongosh passes.
+- [ ] mongosh passes, or shows as optional/not installed (fine if you use the Compass shell).
 - [ ] Postman is detected.
 - [ ] MongoDB Server connects on `127.0.0.1:27017`.
 - [ ] Output displays `🎉 SUCCESS: All prerequisites are verified! You are ready to start Step 01.`
@@ -92,7 +92,8 @@ Summary: 5 of 5 checks passed.
   - Locate `MongoDB Server (MongoDB)`.
   - Right-click and select **Start**.
   - Alternatively, open an Administrator PowerShell and run: `net start MongoDB` or start `mongod.exe`.
-- **mongosh FAIL (mongosh not found in PATH)**:
+- **mongosh shows as optional / not installed**:
+  - You do not need it. Use the **`>_ MONGOSH`** panel at the bottom of MongoDB Compass. Only follow the steps below if you prefer PowerShell:
   - If installed via winget or MSI, ensure its installation directory is added to your User `PATH` environment variable.
   - Quick install via winget:
     ```powershell

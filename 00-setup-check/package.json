@@ -1,0 +1,11 @@
+{
+  "name": "day4-setup-check",
+  "version": "1.0.0",
+  "description": "Environment and prerequisite validation for Day 4 Full Stack Lab (RVCE CSE)",
+  "scripts": {
+    "test": "node check-setup.js",
+    "check": "node check-setup.js"
+  },
+  "author": "Department of Computer Science & Engineering, RVCE",
+  "license": "MIT"
+}

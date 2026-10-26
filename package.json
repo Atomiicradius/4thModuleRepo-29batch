@@ -1,0 +1,21 @@
+{
+  "name": "day4-student-management",
+  "version": "1.0.0",
+  "description": "Day 4: Database Integration and Full-Stack Integration - RVCE CSE Skill Lab",
+  "scripts": {
+    "setup:check": "node 00-setup-check/check-setup.js",
+    "seed": "mongosh mongodb://127.0.0.1:27017/CollegeDB 01-mongodb-shell/seed.js",
+    "start": "node reference/server.js",
+    "test:api": "node tests/api.test.js",
+    "test:e2e": "node tests/e2e.test.js",
+    "test": "npm run test:api && npm run test:e2e"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.8.0"
+  },
+  "devDependencies": {
+    "playwright": "^1.44.0"
+  }
+}

@@ -54,7 +54,19 @@ startServer();
 
 // ==========================================
 // YOUR TURN:
-// Change DB_NAME to 'TestCollegeDB' and inspect the terminal output.
-// Observe that MongoDB creates databases lazily when data is written.
-// Change it back to 'CollegeDB'.
+// Task 1: Personalize the health route GET / to return your name and current timestamp.
+// Task 2: Create a test insert route to visibly write data to MongoDB:
+//   app.get('/ping-db', async (req, res) => {
+//     const result = await db.collection('pings').insertOne({
+//       ping: 'pong',
+//       message: 'MongoDB write verified from Express!',
+//       timestamp: new Date()
+//     });
+//     res.json({ message: 'Ping saved to MongoDB!', id: result.insertedId });
+//   });
+// Visit http://127.0.0.1:3000/ping-db in your browser, then open mongosh:
+//   use CollegeDB
+//   show collections
+//   db.pings.find()
+// You will see your document physically saved to disk!
 // ==========================================

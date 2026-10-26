@@ -147,3 +147,29 @@ This guide covers every common bug, error message, and stumbling block encounter
 - **Resolution:**
   - Let Express serve your frontend with `app.use(express.static('public'))`.
   - Always view your app in the browser at: `http://127.0.0.1:3000`.
+
+---
+
+### 9. `Cannot find module 'express'` / Skipping Per-Step Installs
+- **Symptom:** Running `node server.js` fails with `Error: Cannot find module 'express'`.
+- **Cause:** No `node_modules` folder in the current subfolder or parent directories.
+- **Resolution:**
+  - Node.js walks up the directory tree looking for `node_modules`. You do **not** need to run `npm install` inside every step folder.
+  - Install dependencies once at the **repository root**:
+    ```powershell
+    cd <repo-root>
+    npm install --omit=dev
+    ```
+  - For offline labs: Extract the pre-bundled `node_modules.zip` provided on the instructor's USB drive directly into the repository root.
+
+---
+
+### 10. `E11000 Duplicate Key Error` on Fresh Step 01 Run
+- **Symptom:** Running `query-demo.js` or `seed.js` fails with duplicate key error on `1CS23CS001`.
+- **Cause:** Previous lab sessions or dry-run tests left documents inside `CollegeDB`.
+- **Resolution:**
+  - Cleanly drop the database before running shell exercises:
+    ```powershell
+    mongosh --eval "db.getSiblingDB('CollegeDB').dropDatabase()"
+    ```
+

@@ -3,9 +3,14 @@
  * Can be loaded into mongosh: load("query-demo.js")
  */
 
-// 1. Select the database
+// 1. Select the database and ensure a clean state
 db = db.getSiblingDB("CollegeDB");
 print("Switched to CollegeDB");
+
+// Reset collection so this demo runs cleanly even if data already exists
+db.students.drop();
+db.createCollection("students");
+db.students.createIndex({ usn: 1 }, { unique: true });
 
 // 2. Insert single student
 print("\n--- 1. insertOne ---");

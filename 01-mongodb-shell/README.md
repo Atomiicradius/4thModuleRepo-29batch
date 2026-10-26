@@ -12,7 +12,16 @@ A MongoDB server holds multiple **databases**, each database contains **collecti
 
 ## Instructor Demo Steps
 
-Follow each step live on the projector. Open PowerShell and start the MongoDB Shell:
+Follow each step live on the projector.
+
+### 0. Reset / Clean Database (Start from Scratch)
+Before starting this module, ensure `CollegeDB` is completely clean so duplicate key errors (`E11000`) do not occur from previous runs:
+```powershell
+mongosh --eval "db.getSiblingDB('CollegeDB').dropDatabase()"
+```
+*Output:* `{ ok: 1, dropped: "CollegeDB" }`
+
+Open PowerShell and start the interactive MongoDB Shell:
 
 ```powershell
 mongosh "mongodb://127.0.0.1:27017"

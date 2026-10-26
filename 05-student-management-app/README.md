@@ -10,44 +10,41 @@ A full-stack application brings together the frontend client (HTML presentation,
 
 ---
 
-## The 6 Core Features Checklist
+## Feature Breakdown: What's Already Done vs What You Build
 
-Work through each feature one by one. If you get stuck, refer to the corresponding hint file in the `hints/` directory:
+To avoid hunting for missing code, understand that **your `start/` code already includes the foundation from Step 04**:
 
-- [ ] **Feature 1: Add Student** ([Hints: hints/feature-1-add.md](hints/feature-1-add.md))
-  - Submit form data to `POST /students`.
-  - Validate required fields on client and server.
-  - Display inline error banner on duplicate USN (`409 Conflict`).
-  - Clear the form and refresh the table on success.
+| Feature | Status at Start of Step 05 | What You Need To Do |
+| :--- | :---: | :--- |
+| **Feature 1: Add Student** | ✅ Already Built (Step 04) | Functional! Try adding a student to verify. |
+| **Feature 2: View Students** | ✅ Already Built (Step 04) | Functional! Renders table with count badge & XSS escaping. |
+| **Feature 4: Delete Student** | ✅ Already Built (Step 04) | Functional! Confirm dialog and `DELETE` work. |
+| **Feature 3: Edit Student (PUT)** | 🛠️ **YOUR TASK 1** | Wire Edit button, fill form, toggle "Update", send `PUT`. |
+| **Feature 5: Debounced Search** | 🛠️ **YOUR TASK 2** | Add debounced input (300ms) to call `GET /students?search=`. |
+| **Feature 6: Persistence Test** | 🧪 **YOUR TASK 3** | Add records, shut down server with `Ctrl+C`, restart, verify. |
 
-- [ ] **Feature 2: View Students & Count Badge** ([Hints: hints/feature-2-view.md](hints/feature-2-view.md))
-  - Load records from `GET /students` when page loads.
-  - Render an HTML table with USN, Name, Semester, and Branch.
-  - Escape all user input before insertion to prevent XSS vulnerabilities.
-  - Update the count badge showing total enrolled students.
-  - Display a clean empty-state message when 0 students exist.
+---
 
-- [ ] **Feature 3: Edit Student & Form Mode Toggle** ([Hints: hints/feature-3-edit.md](hints/feature-3-edit.md))
-  - Click the "Edit" button on any student row.
-  - Populate the input fields with that student's current values.
-  - Change submit button text from "Add Student" to "Update Student".
-  - Reveal a "Cancel Edit" button.
-  - Submit form via `PUT /students/:id` to update the document in MongoDB.
-  - Reset form back to "Add Student" mode upon success or cancellation.
+## Your Hands-On Tasks in Step 05
 
-- [ ] **Feature 4: Delete Student with Confirmation** ([Hints: hints/feature-4-delete.md](hints/feature-4-delete.md))
-  - Click the "Delete" button.
-  - Ask for user confirmation via `window.confirm()`.
-  - Issue `DELETE /students/:id`.
-  - Show success notification and remove row from table.
+Refer to the hint files in `hints/` if you need guidance:
 
-- [ ] **Feature 5: Debounced Live Search** ([Hints: hints/feature-5-search.md](hints/feature-5-search.md))
+- [ ] **Task 1: Feature 3 — Edit Student & Form Mode Toggle** ([Hints: hints/feature-3-edit.md](hints/feature-3-edit.md))
+  - When the user clicks "Edit" on a student row:
+    - Store the student's `_id` in a state variable (`let editingStudentId = student._id`).
+    - Populate the input fields (Name, USN, Semester, Branch).
+    - Change submit button text from "Add Student" to "Update Student".
+    - Reveal the "Cancel Edit" button.
+  - When submitted in edit mode, send `PUT /students/:editingStudentId`.
+  - When "Cancel Edit" is clicked, reset form to "Add Student" mode.
+
+- [ ] **Task 2: Feature 5 — Debounced Live Search** ([Hints: hints/feature-5-search.md](hints/feature-5-search.md))
   - Add search input field above the table.
-  - Listen to the `input` event and apply a 300ms debounce timer.
+  - Listen to the `input` event and apply a 300ms debounce timer with `setTimeout`.
   - Query `GET /students?search=<query>` to filter by Name or USN.
-  - Provide a "Clear" button to restore all records.
+  - Connect the "Clear" button to restore all records.
 
-- [ ] **Feature 6: Full-Stack Persistence Test** ([Hints: hints/feature-6-persistence.md](hints/feature-6-persistence.md))
+- [ ] **Task 3: Feature 6 — Full-Stack Persistence Verification** ([Hints: hints/feature-6-persistence.md](hints/feature-6-persistence.md))
   - Add and edit student records in the UI.
   - Refresh the browser (`Ctrl + F5`) and confirm records persist.
   - Stop the Node server (`Ctrl + C`) and restart it (`node server.js`).
@@ -61,8 +58,8 @@ Work through each feature one by one. If you get stuck, refer to the correspondi
 2. **Column Sorting:** Click on the "Name" or "Semester" table header to sort students ascending or descending.
 3. **Toast Notifications:** Replace the banner with floating, auto-dismissing toast notifications in the top-right corner.
 
-> 💡 **Finished Reference Implementation:**
-> If you want to compare your finished code or inspect how the stretch goals are implemented, check out the `reference/` directory at the root of this repository.
+> 💡 **Pedagogical Note on `snapshot/` and `reference/`:**
+> The finished code in `snapshot/` and `reference/` is provided as an educational safety net so you can inspect working implementations or catch up if you fall behind. **Challenge yourself to build Features 3, 5, and 6 using only the `hints/` files first!** (Instructors may also opt to withhold the `reference/` folder until the end of the lab session).
 
 ---
 

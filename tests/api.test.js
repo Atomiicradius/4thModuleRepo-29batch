@@ -44,7 +44,7 @@ function startServer() {
         resolved = true;
         resolve(proc);
       }
-    }, 3000);
+    }, 6000);
   });
 }
 

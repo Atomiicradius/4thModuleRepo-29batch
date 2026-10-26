@@ -3,7 +3,7 @@
  * Setup Verification Script
  * 
  * Verifies:
- * 1. Node.js (version 18+)
+ * 1. Node.js (version 22+ or 24+ LTS)
  * 2. npm (Node Package Manager)
  * 3. MongoDB Server (service running & accepting connections on 127.0.0.1:27017)
  * 4. mongosh (MongoDB Shell CLI in PATH)
@@ -28,7 +28,7 @@ const BOLD = '\x1b[1m';
 const RESET = '\x1b[0m';
 
 console.log(`${BOLD}${CYAN}====================================================${RESET}`);
-console.log(`${BOLD}${CYAN}   Day 4: Full Stack Development Skill Lab (RVCE)   ${RESET}`);
+console.log(`${BOLD}${CYAN}   Day 4: Full Stack Development Skill Lab          ${RESET}`);
 console.log(`${BOLD}${CYAN}   Environment & Prerequisite Verification Check    ${RESET}`);
 console.log(`${BOLD}${CYAN}====================================================${RESET}\n`);
 
@@ -51,23 +51,23 @@ function reportResult(name, passed, details, fixHint) {
   console.log('');
 }
 
-// 1. Check Node.js Version
+// 1. Check Node.js Version (Node 22 or 24 LTS required)
 function checkNode() {
   try {
-    const versionStr = process.version; // e.g. "v18.17.0"
+    const versionStr = process.version; // e.g. "v22.14.0" or "v24.11.1"
     const major = parseInt(versionStr.replace('v', '').split('.')[0], 10);
-    if (major >= 18) {
-      reportResult('Node.js Runtime', true, `Detected ${versionStr} (Required: v18+)`);
+    if (major >= 22) {
+      reportResult('Node.js Runtime', true, `Detected ${versionStr} (Required: v22+ or v24+)`);
     } else {
       reportResult(
         'Node.js Runtime',
         false,
-        `Detected ${versionStr} (v18 or higher required for modern fetch & MongoDB driver)`,
-        'Download and install Node.js 18+ or 20+ LTS from https://nodejs.org'
+        `Detected ${versionStr} (Node 22 or 24 required; older versions such as v18/v20 are deprecated/EOL)`,
+        'Download and install Node.js 22+ LTS or 24 from https://nodejs.org'
       );
     }
   } catch (err) {
-    reportResult('Node.js Runtime', false, err.message, 'Install Node.js from https://nodejs.org');
+    reportResult('Node.js Runtime', false, err.message, 'Install Node.js 22+ or 24 from https://nodejs.org');
   }
 }
 
@@ -130,7 +130,7 @@ function checkMongosh() {
           version = execSync(`"${p}" --version`, { encoding: 'utf-8', stdio: ['pipe', 'pipe', 'ignore'] }).trim();
           inPath = true;
           break;
-        } catch (_) {}
+        } catch (_) { }
       }
     }
   }
@@ -187,7 +187,7 @@ function checkPostman() {
       execSync('where.exe postman', { stdio: ['pipe', 'pipe', 'ignore'] });
       found = true;
       postmanPath = 'Found in system PATH';
-    } catch (_) {}
+    } catch (_) { }
   }
 
   if (found) {
@@ -211,10 +211,10 @@ checkMongoDB(() => {
   console.log(`${BOLD}====================================================${RESET}`);
   console.log(`Summary: ${passCount} of ${totalChecks} checks passed.`);
   if (passCount === totalChecks) {
-    console.log(`${GREEN}${BOLD}🎉 SUCCESS: All prerequisites are verified! You are ready to start Step 01.${RESET}`);
+    console.log(`${GREEN}${BOLD} SUCCESS: All prerequisites are verified! You are ready to start Step 01.${RESET}`);
     process.exit(0);
   } else {
-    console.log(`${YELLOW}${BOLD}⚠️  ATTENTION: Please address the failed checks above before continuing.${RESET}`);
+    console.log(`${YELLOW}${BOLD}  ATTENTION: Please address the failed checks above before continuing.${RESET}`);
     process.exit(1);
   }
 });

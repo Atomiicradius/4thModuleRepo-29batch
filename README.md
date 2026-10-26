@@ -44,11 +44,17 @@ By the end of this lab, you will be able to:
 
 Before starting Module 2, ensure your Windows lab computer has the required software:
 
-1. **Node.js 18+ (LTS)**: Run `node -v` in terminal (should output `v18.x`, `v20.x`, or higher).
-2. **MongoDB Community Server**: Windows service `MongoDB Server` must be running on port `27017`.
-3. **MongoDB Shell (`mongosh`)**: Run `mongosh --version` (should be `2.x`).
+1. **Node.js (v22+ or v24+ LTS)**: Run `node -v` in terminal (Node 20 reached EOL in April 2026; Node 22 or 24 is required).
+2. **MongoDB Community Server**: Local service running on port `27017` (`127.0.0.1`).
+3. **MongoDB Shell (`mongosh`)**: Run `mongosh --version` (v2.x).
 4. **Postman Desktop**: Installed for API endpoint verification.
 5. **Web Browser**: Chrome, Edge, or Firefox.
+
+### Fresh Database Reset:
+To ensure previous runs or dry-run experiments don't cause duplicate key errors (`E11000`), reset `CollegeDB` cleanly:
+```powershell
+mongosh --eval "db.getSiblingDB('CollegeDB').dropDatabase()"
+```
 
 ### Automated Setup Check:
 Run the built-in diagnostic script inside `00-setup-check`:
@@ -62,24 +68,36 @@ node check-setup.js
 
 ## How to Follow Along During Lab
 
-1. **Clone this repository** to your local lab machine:
+1. **Clone this repository** (or copy & extract the zip from the instructor's USB drive):
    ```powershell
-   git clone <repository-url> day4-student-management
+   git clone https://github.com/Sxmxrth05/4thDayRepo.git day4-student-management
    cd day4-student-management
    ```
-2. **Open in VS Code**:
+
+2. **One Install at Root (Skip Per-Step Installs):**
+   > 💡 **Important Lab Optimization:** Node.js resolves `node_modules` up the directory tree. A single install at the repository root serves **every single step folder** (`02`, `03`, `04`, `05`, and `reference`).
+   > - If connected to internet, run once at the root:
+   >   ```powershell
+   >   npm install --omit=dev
+   >   ```
+   > - In offline labs: If your instructor provided `node_modules` on a USB drive, extract it into this root directory. **You do not need to run `npm install` inside each step folder!**
+
+3. **Open in VS Code**:
    ```powershell
    code .
    ```
-3. **Work Step-by-Step**:
+
+4. **Work Step-by-Step**:
    - Each module corresponds to a numbered folder (e.g., `01-mongodb-shell`, `02-connect-backend`, etc.).
    - Read each folder's `README.md` as your personal lab workbook.
    - The instructor demonstrates live on the projector. Follow along in your `start/` folder.
    - Complete the **"Your turn"** hands-on task in each step.
-4. **Fell Behind? Don't Panic!**:
+
+5. **Fell Behind? Don't Panic!**:
    - Every step includes a `snapshot/` folder containing the **complete, working code** at the end of that step.
    - If you get stuck, compare your code with the snapshot or copy the snapshot files over to your workspace to catch up immediately.
    - **Continuous Progression**: Step $N$'s `start/` is identical to Step $N-1$'s `snapshot/`.
+   - **Try Hints First:** The `snapshot/` and `reference/` folders are safety nets. For the best learning experience, try solving tasks using the `hints/` guide before looking at solutions!
 
 ---
 
@@ -182,9 +200,9 @@ day4-student-management/
 
 ---
 
-## Lab Wrap-Up: Committing and Pushing Your Work
+## Lab Wrap-Up: Local Git Commit (Pushing is Homework/Optional)
 
-At the end of the lab session, commit your completed work to Git and push it to your personal GitHub repository for grading and CIE evaluation:
+At the end of the lab session, save your work by making a **local Git commit**. Because college lab networks often restrict outbound Git SSH/HTTPS connections or experience intermittent connectivity, committing locally ensures your progress is safely recorded on your lab computer without depending on an active internet connection.
 
 1. **Check Git Status**:
    ```powershell
@@ -194,17 +212,22 @@ At the end of the lab session, commit your completed work to Git and push it to 
    ```powershell
    git add .
    ```
-3. **Commit your changes**:
+3. **Commit your work locally**:
    ```powershell
    git commit -m "feat: complete Day 4 Student Management System with MongoDB"
    ```
-4. **Push to your GitHub account**:
-   ```powershell
-   # Create a new repository named 'day4-student-management' on github.com, then:
-   git remote add origin https://github.com/<your-username>/day4-student-management.git
-   git branch -M main
-   git push -u origin main
-   ```
+   *Your work is now securely saved in your local Git history!*
+
+---
+
+### Optional / Homework: Pushing to Your GitHub Profile
+When you are on your personal Wi-Fi or hotspot (or for post-lab homework submission):
+```powershell
+# Create an empty repository named 'day4-student-management' on github.com, then:
+git remote add origin https://github.com/<your-username>/day4-student-management.git
+git branch -M main
+git push -u origin main
+```
 
 ---
 

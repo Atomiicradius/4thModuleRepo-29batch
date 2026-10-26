@@ -38,6 +38,24 @@ app.get('/', (req, res) => {
   });
 });
 
+// Test insert route (Your Turn: inserts a document to verify live writing)
+app.get('/ping-db', async (req, res) => {
+  try {
+    const result = await db.collection('pings').insertOne({
+      ping: 'pong',
+      message: 'MongoDB write verified from Express!',
+      timestamp: new Date()
+    });
+    res.json({
+      status: 'ok',
+      message: 'Ping document written to CollegeDB.pings collection!',
+      insertedId: result.insertedId
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Startup function: Connect once, then start Express
 async function startServer() {
   try {

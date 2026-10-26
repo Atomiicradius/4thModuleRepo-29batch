@@ -1,7 +1,7 @@
 # Step 00: Environment & Setup Verification
 
 ## Goal
-Verify that your Windows lab machine has all five essential tools installed, running, and accessible before beginning today's hands-on exercises: **Node.js (18+)**, **npm**, **MongoDB Server (running on 127.0.0.1:27017)**, **mongosh (MongoDB Shell)**, and **Postman**.
+Verify that your Windows lab machine has all five essential tools installed, running, and accessible before beginning today's hands-on exercises: **Node.js (v22+ or v24+ LTS)**, **npm**, **MongoDB Server (running on 127.0.0.1:27017)**, **mongosh (MongoDB Shell)**, and **Postman**.
 
 ---
 
@@ -48,7 +48,7 @@ Before building full-stack applications, your local developer environment requir
 
 ## Checkpoint Checklist
 - [ ] Ran `node check-setup.js` in terminal.
-- [ ] Node.js Runtime passes (v18.0.0 or higher).
+- [ ] Node.js Runtime passes (v22.0.0 or v24.0.0+ LTS).
 - [ ] npm passes.
 - [ ] mongosh passes.
 - [ ] Postman is detected.
@@ -65,7 +65,7 @@ Before building full-stack applications, your local developer environment requir
 ====================================================
 
 [ PASS ] Node.js Runtime
-         ✓ Detected v24.11.1 (Required: v18+)
+         ✓ Detected v24.11.1 (Required: v22+ or v24+)
 
 [ PASS ] Node Package Manager (npm)
          ✓ Detected npm v11.6.2
@@ -91,14 +91,14 @@ Summary: 5 of 5 checks passed.
   - Press `Win + R`, type `services.msc`, and press Enter.
   - Locate `MongoDB Server (MongoDB)`.
   - Right-click and select **Start**.
-  - Alternatively, open an Administrator PowerShell and run: `net start MongoDB`.
+  - Alternatively, open an Administrator PowerShell and run: `net start MongoDB` or start `mongod.exe`.
 - **mongosh FAIL (mongosh not found in PATH)**:
   - If installed via winget or MSI, ensure its installation directory is added to your User `PATH` environment variable.
   - Quick install via winget:
     ```powershell
     winget install MongoDB.Shell
     ```
-- **Node.js version < 18**:
-  - Install latest LTS Node.js from [https://nodejs.org](https://nodejs.org).
+- **Node.js version < 22 (e.g. Node 18 or Node 20 EOL)**:
+  - Node 20 reached end-of-life in April 2026, and Node 18 is older. Install current LTS Node.js (v22+ or v24+) from [https://nodejs.org](https://nodejs.org).
 - **Postman not found**:
   - Download and install Postman Desktop from [https://www.postman.com/downloads](https://www.postman.com/downloads).

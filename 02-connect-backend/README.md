@@ -91,14 +91,44 @@ Open your browser or Postman and visit `http://127.0.0.1:3000/`.
 
 ## Your Turn: Student Task
 
-1. Stop the server by pressing `Ctrl + C` in your terminal.
-2. In `server.js`, change `DB_NAME`:
+1. **Task 1 — Personalize Health Route:** In `server.js`, modify `GET /` to include your name and the current server time:
    ```javascript
-   const DB_NAME = 'TestCollegeDB';
+   app.get('/', (req, res) => {
+     res.json({
+       status: 'ok',
+       message: 'Hello from Rahul\'s server connected to CollegeDB',
+       time: new Date().toLocaleTimeString(),
+       database: DB_NAME
+     });
+   });
    ```
-3. Restart the server with `node server.js`.
-4. Visit `http://127.0.0.1:3000/` in your browser. Notice the JSON response reflects `"database": "TestCollegeDB"`.
-5. Revert `DB_NAME` back to `'CollegeDB'` and verify the output.
+2. **Task 2 — Write Data Live to MongoDB (`/ping-db`):** Add a test route below `GET /` that writes a real document to a `pings` collection:
+   ```javascript
+   app.get('/ping-db', async (req, res) => {
+     try {
+       const result = await db.collection('pings').insertOne({
+         ping: 'pong',
+         author: 'Rahul',
+         timestamp: new Date()
+       });
+       res.json({
+         status: 'ok',
+         message: 'Ping document written to CollegeDB.pings collection!',
+         insertedId: result.insertedId
+       });
+     } catch (err) {
+       res.status(500).json({ error: err.message });
+     }
+   });
+   ```
+3. Restart your server (`node server.js`) and visit `http://127.0.0.1:3000/ping-db` in your browser. Refresh 2 or 3 times!
+4. Open a second PowerShell terminal, launch `mongosh`, and verify your writes physically hit the database:
+   ```javascript
+   use CollegeDB
+   show collections
+   db.pings.find()
+   ```
+   *Notice:* The `pings` collection was dynamically created by your Express code, and each visit inserted a new document with an `_id` and timestamp!
 
 ---
 
